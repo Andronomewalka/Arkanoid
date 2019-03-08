@@ -12,15 +12,14 @@ namespace arkanoid
 {
     public partial class Form1 : Form
     {
-        Map map;
+        RunController run;
         public Form1()
         {
             InitializeComponent();
-            ClientSize = new Size(800, 600);
+            ClientSize = new Size(810, 600);
             CenterToScreen();
             DoubleBuffered = true;
-            map = new Map(this);
-            map.Create();
+            run = new RunController(this,1);
             Refresh();
         }
     }
