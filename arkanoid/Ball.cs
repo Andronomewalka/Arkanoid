@@ -9,17 +9,13 @@ namespace arkanoid
 {
     public class Ball : Moveable
     {
+
         public override void Move(int dx, int dy)
         {
             throw new NotImplementedException();
         }
 
         protected override Point[] AreaToBounds(Rectangle area)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Rectangle BoundsToArea()
         {
             throw new NotImplementedException();
         }

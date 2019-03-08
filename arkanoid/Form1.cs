@@ -21,6 +21,7 @@ namespace arkanoid
             DoubleBuffered = true;
             map = new Map(this);
             map.Create();
+            Refresh();
         }
     }
 }

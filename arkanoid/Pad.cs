@@ -9,18 +9,26 @@ namespace arkanoid
 {
     class Pad : Moveable, Iinteractable
     {
-        private Image textureRight;
-        private Image textureLeft;
         public Pad(Rectangle area)
         {
-            texture = Properties.Resources.pad;
-            textureLeft = Properties.Resources.pad_left;
-            textureRight = Properties.Resources.pad_right;
+            Texture = new Bitmap(Properties.Resources.pad.Width * 3, Properties.Resources.pad.Height);
+            Texture.SetResolution(72, 72);
+            PadPaint();
             this.area = area;
             bounds = AreaToBounds(area);
             dx = 0;
             dy = 0;
             speed = 100f;
+        }
+
+        private void PadPaint()
+        {
+            using (Graphics g = Graphics.FromImage(Texture))
+            {
+                g.DrawImage(Properties.Resources.pad_left, 0, 0);
+                g.DrawImage(Properties.Resources.pad, 45, 0);
+                g.DrawImage(Properties.Resources.pad_right, 90, 0);
+            }
         }
 
         protected override Point[] AreaToBounds(Rectangle area)
@@ -48,7 +56,7 @@ namespace arkanoid
                         }
                     }
                 }
-
+    
                 if (i == area.Y)
                     indent -= 4;
                 else if (i == area.Y + 1)
@@ -60,60 +68,16 @@ namespace arkanoid
             }
             return res.ToArray();
         }
-
-        public override void Draw(Bitmap bitmap, int x, int y)
-        {
-            using (Graphics g = Graphics.FromImage(bitmap))
-            {
-                g.DrawImage(textureLeft, x, y);
-                g.DrawImage(texture, x + Map.TileWidth, y);
-                g.DrawImage(textureRight, x + Map.TileWidth * 2, y);
-            }
-        }
-
-        public override void Erase()
-        {
-            using (Graphics g = Graphics.FromImage(Map.FieldPictures.Image))
-            {
-                Rectangle area = BoundsToArea();
-                g.DrawImage(Properties.Resources.background, area, area, GraphicsUnit.Pixel);
-                Map.FieldPictures.Refresh();
-            }
-        }
-
-        private void Update()
-        {
-            using (Graphics g = Graphics.FromImage(Map.FieldPictures.Image))
-            {
-                Bitmap bitmap = new Bitmap(Map.TileWidth * 3, Map.TileHeight);
-                bitmap.SetResolution(72, 72);
-                Draw(bitmap, area.X, area.Y);
-                g.DrawImageUnscaledAndClipped(bitmap, area);
-               // Map.FieldPictures.Refresh();
-            }
-        }
-
-        protected override Rectangle BoundsToArea()
-        {
-            return area;
-        }
-
+    
         public bool Contain(Point ball)
         {
             throw new NotImplementedException();
         }
-
+    
         public override void Move(int dx, int dy)
         {
-            Erase(); // обновляем изображение без текстуры
-           // Bitmap newPad = new Bitmap(Map.FieldPictures.Image); // фиксируем его 
-           // newPad.SetResolution(72, 72);
-            area = new Rectangle(area.X + dx, area.Y, area.Width, area.Height);
-            bounds = AreaToBounds(area);
-            //  Draw(newPad, area.X, area.Y);
-            // Map.FieldPictures.Image = newPad;
-            Update(); // накладываем на него текстуру
-
+            area = new Rectangle(Area.X + dx, Area.Y, Area.Width, Area.Height);
+            bounds = AreaToBounds(Area);
         }
     }
 }

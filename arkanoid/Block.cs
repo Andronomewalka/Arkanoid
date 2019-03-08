@@ -9,12 +9,12 @@ namespace arkanoid
 {
     public class Block : GameObject, Iinteractable
     {
-
         public Block(Rectangle area)
         {
-            texture = Properties.Resources.block;
+            Texture = Properties.Resources.block;
+            this.area = area;
+            Texture.SetResolution(72, 72);
             bounds = AreaToBounds(area);
-           // Map.FieldPictures.Paint += FieldPictures_Paint;
         }
 
         protected override Point[] AreaToBounds(Rectangle area)
@@ -37,17 +37,6 @@ namespace arkanoid
             return res;
         }
 
-        protected override Rectangle BoundsToArea()
-        {
-            return new Rectangle()
-            {
-                X = bounds[0].X,
-                Y = bounds[0].Y,
-                Width = bounds[37].X - bounds[0].X + 4,
-                Height = bounds[119].Y - bounds[0].Y + 4
-            };
-        }
-
         public bool Contain(Point ball)
         {
             foreach (var item in bounds)
@@ -57,6 +46,5 @@ namespace arkanoid
             }
             return false;
         }
-
     }
 }

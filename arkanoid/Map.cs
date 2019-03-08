@@ -12,24 +12,35 @@ namespace arkanoid
     public class Map
     {
         public static Form1 Parent { get; private set; }
-        public static int TileWidth { get; private set; } = Properties.Resources.block.Width; // размер тайла
-        public static int TileHeight { get; private set; } = Properties.Resources.block.Height;
 
         private int[,] logicField; // логическое поле игры (загружаем из файла уровня)
-        public static PictureBox FieldPictures { get; private set; } // графическое представление уровня
+        private PictureBox PictureField; // public static PictureBox PictureField { get; private set; } // графическое представление уровня
         private List<GameObject> objects; // список игровых объектов карты
+
+        private Image background = Properties.Resources.background;
+        int TileWidth;
+        int TileHeight;
+
+
 
         public Map(Form1 parent)
         {
             Parent = parent;
+
             objects = new List<GameObject>();
-            FieldPictures = new PictureBox()
+
+            PictureField = new PictureBox()
             {
                 Size = parent.ClientSize,
-                BackgroundImage = Properties.Resources.background,
+                // BackgroundImage = Properties.Resources.background,
                 Parent = parent
             };
-            FieldPictures.Click += MazePicture_Click;
+            PictureField.Click += MazePicture_Click;
+            PictureField.Paint += PictureField_Paint;
+
+            TileWidth = Properties.Resources.block.Width;
+            TileHeight = Properties.Resources.block.Height;
+
             Parent.KeyDown += Parent_KeyDown;
 
             logicField = new int[10, 10]
@@ -47,16 +58,29 @@ namespace arkanoid
             };
         }
 
+        private void PictureField_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+
+            var pBack = new TextureBrush(background);
+            g.FillRectangle(pBack, PictureField.ClientRectangle);
+
+            foreach (var item in objects)
+                g.DrawImage(item.Texture, item.Area);
+        }
+
         private void Parent_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Right)
             {
                 // последний объект в списке всегда платформа
-                (objects.Last() as Moveable).Move(10, 0);
+                (objects.Last() as Moveable).Move(1, 0);
+                PictureField.Invalidate();
             }
             else if (e.KeyCode == Keys.Left)
             {
-                (objects.Last() as Moveable).Move(-10, 0);
+                (objects.Last() as Moveable).Move(-1, 0);
+                PictureField.Invalidate();
             }
         }
 
@@ -69,8 +93,8 @@ namespace arkanoid
             {
                 if (item is Block && (item as Iinteractable).Contain(point))
                 {
-                    item.Erase();
                     objects.Remove(item);
+                    PictureField.Invalidate();
                     return;
                 }
             }
@@ -93,22 +117,40 @@ namespace arkanoid
                     if (logicField[i, k] == (int)Obj.block)
                     {
                         objects.Add(new Block(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight)));
-                        objects.Last().Draw(bitmapField, bitmapCoord.X, bitmapCoord.Y);
                     }
-                    else if (logicField[i, k] == (int)Obj.pad)
-                    {
-                        // платформа состоит из трёх тайлов
-                        objects.Add(new Pad(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth * 3, TileHeight)));
-                        objects.Last().Draw(bitmapField, bitmapCoord.X, bitmapCoord.Y);
-                        bitmapCoord.X += TileWidth * 2;
-                        k += 2;
-                    }
+                     else if (logicField[i, k] == (int)Obj.pad)
+                     {
+                         // платформа состоит из трёх тайлов
+                         objects.Add(new Pad(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth * 3, TileHeight)));
+                         bitmapCoord.X += TileWidth * 2;
+                         k += 2;
+                     }
                     bitmapCoord.X += TileWidth;
                 }
                 bitmapCoord = new Point(0, bitmapCoord.Y + TileHeight);
             }
-
-            FieldPictures.Image = bitmapField;
+            // PictureField.Image = bitmapField;
         }
+
+
     }
+    //partial class Form1
+    //{
+    //    protected override void Paint(PaintEventArgs e)
+    //    {
+    //        base.OnPaint(e);
+    //        Graphics g = e.Graphics;
+    //
+    //        var pBack = new TextureBrush(background);
+    //        g.FillRectangle(pBack, ClientRectangle);
+    //
+    //        for (int i = 1; i < 5; i++)
+    //        {
+    //            g.TranslateTransform(objects[i].x, objects[i].y);
+    //            //g.RotateTransform(objects[i].angle);
+    //            g.DrawImage(objects[i].pic, -objects[i].width / 2, -objects[i].height / 2, objects[i].width, objects[i].height);
+    //            g.ResetTransform();
+    //        }
+    //    }
+    //}
 }
