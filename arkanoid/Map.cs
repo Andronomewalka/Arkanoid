@@ -10,7 +10,7 @@ namespace arkanoid
 {
     public class Map
     {
-        enum Obj { block = 1, pad = 2 }
+        enum Obj { block = 1, pad = 2, ball = 3 }
         private Level level; // текущий уровень
         public PictureBox PictureField { get; private set; } // графическое представление уровня
         public List<GameObject> Objects { get; private set; } // список игровых объектов текущего уровня
@@ -18,10 +18,13 @@ namespace arkanoid
         private int TileWidth; // размеры тайла
         private int TileHeight;
 
-
+        public static Rectangle WindowSize { get; private set; }
 
         public Map(Form1 parent, Level level)
         {
+            WindowSize = new Rectangle(
+                    new Point(parent.ClientRectangle.X + 30, parent.ClientRectangle.Y),
+                    new Size(parent.ClientRectangle.Width - 60, parent.ClientRectangle.Height - 50));
             Objects = new List<GameObject>();
 
             PictureField = new PictureBox()
@@ -29,7 +32,6 @@ namespace arkanoid
                 Size = parent.ClientSize,
                 Parent = parent
             };
-            PictureField.Click += MazePicture_Click;
             PictureField.Paint += PictureField_Paint;
 
             TileWidth = Properties.Resources.block.Width;
@@ -49,27 +51,11 @@ namespace arkanoid
                 g.DrawImage(item.Texture, item.Area);
         }
 
-        private void MazePicture_Click(object sender, EventArgs e)
-        {
-            MouseEventArgs em = e as MouseEventArgs;
-            Point point = new Point(em.X, em.Y);
-
-            foreach (var item in Objects)
-            {
-                if (item is Block && (item as Iinteractable).Contain(point))
-                {
-                    Objects.Remove(item);
-                    PictureField.Invalidate();
-                    return;
-                }
-            }
-        }
-
-        // накладываем текстуры на логическое поле(0 - пустота, 1 - блок)
+        // накладываем текстуры на логическое поле(1 - блок, 2 - платформа)
         public void Create()
         {
             Bitmap bitmapField = new Bitmap(PictureField.Width, PictureField.Height);
-            bitmapField.SetResolution(72, 72); // по мере заполнения поля добавляем тайлы в битмап, после чего записываем его в PictureBox
+            bitmapField.SetResolution(72, 72); // по мере заполнения поля добавляем тайлы в битмап
             Point bitmapCoord = new Point(); // координаты для ориентирования в битмапе
 
             for (int i = 0; i < level.FieldHeight; i++)
@@ -80,13 +66,17 @@ namespace arkanoid
                     {
                         Objects.Add(new Block(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight)));
                     }
-                     else if (level.LogicField[i, k] == (int)Obj.pad)
-                     {
-                         // платформа состоит из трёх тайлов
-                         Objects.Add(new Pad(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth * 3, TileHeight)));
-                         bitmapCoord.X += TileWidth * 2;
-                         k += 2;
-                     }
+                    else if (level.LogicField[i, k] == (int)Obj.pad)
+                    {
+                        // платформа состоит из трёх тайлов
+                        Objects.Add(new Pad(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth * 3, TileHeight)));
+                        bitmapCoord.X += TileWidth * 2;
+                        k += 2;
+                    }
+                    else if (level.LogicField[i, k] == (int)Obj.ball)
+                    {
+                        Objects.Add(new Ball(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight)));
+                    }
                     bitmapCoord.X += TileWidth;
                 }
                 bitmapCoord = new Point(0, bitmapCoord.Y + TileHeight);

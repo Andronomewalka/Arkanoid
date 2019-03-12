@@ -20,7 +20,6 @@ namespace arkanoid
             CenterToScreen();
             DoubleBuffered = true;
             run = new RunController(this,1);
-            Refresh();
         }
     }
 }

@@ -7,20 +7,21 @@ using System.Threading.Tasks;
 
 namespace arkanoid
 {
-    public class Block : GameObject, Iinteractable
+    public class Block : GameObject
     {
         public Block(Rectangle area)
         {
             Texture = Properties.Resources.block;
-            this.area = area;
+            Area = area;
             Texture.SetResolution(72, 72);
-            bounds = AreaToBounds(area);
+            Bounds = AreaToBounds(area);
         }
 
-        protected override Point[] AreaToBounds(Rectangle area)
+        protected override List<Point> AreaToBounds(Rectangle area)
         {
-            Point[] res = new Point[120]; // вычилено опытным путём
-            int Ires = 0;
+            Color test = Texture.GetPixel(44, 31);
+            Color test2 = Texture.GetPixel(5, 5);
+            List<Point> res = new List<Point>(); // вычилено опытным путём
             for (int i = area.Y + 4; i <= area.Bottom - 5; i++)
             {
                 for (int k = area.X + 4; k <= area.Right - 4; k++)
@@ -29,20 +30,28 @@ namespace arkanoid
                         || k == area.X + 4 || k == area.Right - 4)
 
                     {
-                        res[Ires] = new Point(k, i);
-                        Ires++;
+                        res.Add(new Point(k, i));
                     }
                 }
             }
             return res;
         }
 
-        public bool Contain(Point ball)
+        public override bool IfCollision(Ball ball)
         {
-            foreach (var item in bounds)
+            foreach (var ballItem in ball.Bounds)
             {
-                if (item.X == ball.X && item.Y == ball.Y)
-                    return true;
+                foreach (var blockItem in Bounds)
+                {
+                    if (ballItem.X == blockItem.X && ballItem.Y == blockItem.Y)
+                    {
+                        System.Windows.Vector normVector = new System.Windows.Vector(blockItem.Y - blockItem.Y, blockItem.X + 1 - blockItem.X);
+                        ball.Direction = ball.Direction - 2 * normVector * ((ball.Direction * normVector) / (normVector * normVector));
+                        ball.Move();
+
+                        return true;
+                    }
+                }
             }
             return false;
         }

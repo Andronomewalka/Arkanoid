@@ -16,46 +16,47 @@ namespace arkanoid
         public Image Background { get; private set; } // задник
         public int FieldWidth { get; private set; } // размеры логического поля
         public int FieldHeight { get; private set; }
-        int levelNum;
 
-        private string path;
+        private  static string path;
+
+        static Level()
+        {
+            path = Environment.CurrentDirectory.ToString() + "\\Levels";
+        }
 
         public Level(int levelNum)
         {
-            path = Environment.CurrentDirectory.ToString() + "\\Levels";
-
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
             FieldWidth = 18;
             FieldHeight = 18;
-            //LogicField = new int[18, 18]
-            //{
-            //    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-            //    { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
-            //    { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
-            //    { 0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0 },
-            //    { 1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1 },
-            //    { 1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1 },
-            //    { 0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0 },
-            //    { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
-            //    { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
-            //    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-            //    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-            //    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-            //    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-            //    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-            //    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-            //    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-            //    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-            //    { 0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0 },
-            //};
-            //Background = Properties.Resources.background;
-            this.levelNum = levelNum;
-            // Serialization();
+            LogicField = new int[18, 18]
+            {
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
+                { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
+                { 0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0 },
+                { 1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1 },
+                { 1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1 },
+                { 0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0 },
+                { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
+                { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+            };
+            Background = Properties.Resources.background;
+            Serialization(levelNum);
         }
 
-        private void Serialization()
+        private void Serialization(int levelNum)
         {
             BinaryFormatter formatter = new BinaryFormatter();
 
@@ -65,7 +66,7 @@ namespace arkanoid
             }
         }
 
-        public Level Deserialization()
+        public static Level Deserialization(int levelNum)
         {
             Level current = null;
             BinaryFormatter formatter = new BinaryFormatter();
@@ -75,6 +76,11 @@ namespace arkanoid
                 {
                     current = formatter.Deserialize(fs) as Level;
                 }
+                current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 3] = 2;
+                current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 2] = 2;
+                current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 1] = 2;
+                current.LogicField[current.LogicField.GetLength(0) - 3, current.LogicField.GetLength(1) - 2] = 3;
+                //current.LogicField[0, 0] = 3;
             }
             catch (Exception e)
             {

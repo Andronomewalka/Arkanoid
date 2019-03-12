@@ -9,9 +9,14 @@ namespace arkanoid
 {
     public abstract class Moveable : GameObject
     {
-        protected int dx; // напралвение x
-        protected int dy; // направление y
+        public System.Windows.Vector Direction { get; set; }
         protected float speed; // скорость
-        public abstract void Move(int dx, int dy);
+
+        public virtual void Move() { }
+        public void SetPosition(int posX, int posY)
+        {
+            Area = new Rectangle(posX - Area.Width / 2, posY, Area.Width, Area.Height);
+            Bounds = AreaToBounds(Area);
+        }
     }
 }
