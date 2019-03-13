@@ -13,10 +13,10 @@ namespace arkanoid
         protected float speed; // скорость
 
         public virtual void Move() { }
-        public void SetPosition(int posX, int posY)
+        public void SetPosition(float posX, float posY)
         {
-            Area = new Rectangle(posX - Area.Width / 2, posY, Area.Width, Area.Height);
-            Bounds = AreaToBounds(Area);
+            Area = new RectangleF(posX - Area.Width / 2, posY, Area.Width, Area.Height);
+            Body = DefineBody(Area);
         }
     }
 }

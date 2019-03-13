@@ -9,15 +9,15 @@ namespace arkanoid
 {
     class Pad : Moveable
     {
-        public Pad(Rectangle area)
+        public Pad(RectangleF area)
         {
             Texture = new Bitmap(Properties.Resources.pad.Width * 3, Properties.Resources.pad.Height);
             Texture.SetResolution(72, 72);
             PadPaint();
             Area = area;
-            Bounds = AreaToBounds(area);
+            Body = DefineBody(area);
             Direction = new System.Windows.Vector(0f, 0f);
-            speed = 100f;
+            speed = 0f;
         }
 
         private void PadPaint()
@@ -30,30 +30,37 @@ namespace arkanoid
             }
         }
 
-        protected override List<Point> AreaToBounds(Rectangle area)
+        protected override List<Line> DefineBody(RectangleF area)
         {
-            List<Point> res = new List<Point>();
+            List<Line> res = new List<Line>();
+            PointF rightConnection = new Point();
+            PointF leftConnection = new Point();
             int indent = 21;
-            for (int i = area.Y; i <= area.Y + area.Height; i++)
+
+            for (float i = area.Top; i <= area.Bottom; i++)
             {
-                for (int k = area.X; k <= area.X + area.Width; k++)
+                if (i <= area.Y + 12)
                 {
-                    if (i <= area.Y + 13)
+                    if (i == area.Top)
                     {
-                        if ((i == area.Y && k > area.Left + indent && k <= area.Right - indent)
-                            || (k > area.Left + indent && k <= area.Left + indent + 2)
-                                || k >= area.Right - indent - 2 && k < area.Right - indent)
-                        {
-                            res.Add(new Point(k, i));
-                        }
+                        res.Add(new Line(new PointF(area.Left + indent, i), new PointF(area.Right - indent, i)));
+                        leftConnection = new PointF(area.Left + indent, i);
+                        rightConnection = new PointF(area.Right - indent, i);
                     }
                     else
                     {
-                        if (k == area.Left || k == area.Right)
-                        {
-                            res.Add(new Point(k, i));
-                        }
+                        res.Add(new Line(leftConnection, new PointF(area.Left + indent, i)));
+                        leftConnection = new PointF(area.Left + indent, i);
+                        res.Add(new Line(rightConnection, new PointF(area.Right - indent, i)));
+                        rightConnection = new PointF(area.Right - indent, i);
                     }
+                }
+                else
+                {
+                    res.Add(new Line(leftConnection, new PointF(leftConnection.X, Area.Bottom)));
+                    res.Add(new Line(rightConnection, new PointF(rightConnection.X, Area.Bottom)));
+                    res.Add(new Line(new PointF(leftConnection.X, Area.Bottom), new PointF(rightConnection.X, Area.Bottom)));
+                    break;
                 }
 
                 if (i == area.Y)
@@ -66,25 +73,6 @@ namespace arkanoid
                     indent -= 1;
             }
             return res;
-        }
-
-        public override bool IfCollision(Ball ball)
-        {
-            foreach (var ballItem in ball.Bounds)
-            {
-                foreach (var padItem in Bounds)
-                {
-                    if (ballItem.X == padItem.X && ballItem.Y == padItem.Y)
-                    {
-                        System.Windows.Vector normVector = new System.Windows.Vector(ballItem.Y - ballItem.Y, ballItem.X + 1 - ballItem.X);
-                        ball.Direction = ball.Direction - 2 * normVector * ((ball.Direction * normVector) / (normVector * normVector));
-                        ball.Move();
-
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
     }
 }

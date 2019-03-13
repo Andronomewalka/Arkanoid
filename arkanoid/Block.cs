@@ -9,51 +9,42 @@ namespace arkanoid
 {
     public class Block : GameObject
     {
-        public Block(Rectangle area)
+        public Block(RectangleF area)
         {
-            Texture = Properties.Resources.block;
+            Texture = Properties.Resources.block2;
             Area = area;
             Texture.SetResolution(72, 72);
-            Bounds = AreaToBounds(area);
+            Body = DefineBody(area);
         }
 
-        protected override List<Point> AreaToBounds(Rectangle area)
+        protected override List<Line> DefineBody(RectangleF area)
         {
-            Color test = Texture.GetPixel(44, 31);
-            Color test2 = Texture.GetPixel(5, 5);
-            List<Point> res = new List<Point>(); // вычилено опытным путём
-            for (int i = area.Y + 4; i <= area.Bottom - 5; i++)
-            {
-                for (int k = area.X + 4; k <= area.Right - 4; k++)
-                {
-                    if (i == area.Y + 4 || i == area.Bottom - 5
-                        || k == area.X + 4 || k == area.Right - 4)
+            List<Line> res = new List<Line>();
+            res.Add(new Line(new PointF(Area.Left + 13, Area.Top + 3), new PointF(Area.Right - 13, Area.Top + 3)));
 
-                    {
-                        res.Add(new Point(k, i));
-                    }
-                }
-            }
+            res.Add(new Line(new PointF(Area.Left + 13, Area.Top + 3), new PointF(Area.Left + 10, Area.Top + 4)));
+            res.Add(new Line(new PointF(Area.Right - 13, Area.Top + 3), new PointF(Area.Right - 10, Area.Top + 4)));
+
+            res.Add(new Line(new PointF(Area.Left + 10, Area.Top + 4), new PointF(Area.Left + 6, Area.Top + 8)));
+            res.Add(new Line(new PointF(Area.Right - 10, Area.Top + 4), new PointF(Area.Right - 6, Area.Top + 8)));
+
+            res.Add(new Line(new PointF(Area.Left + 6, Area.Top + 8), new PointF(Area.Left + 5, Area.Top + 10)));
+            res.Add(new Line(new PointF(Area.Right - 6, Area.Top + 8), new PointF(Area.Right - 5, Area.Top + 10)));
+
+            res.Add(new Line(new PointF(Area.Left + 5, Area.Top + 10), new PointF(Area.Left + 5, Area.Top + 19)));
+            res.Add(new Line(new PointF(Area.Right - 5, Area.Top + 10), new PointF(Area.Right - 5, Area.Top + 19)));
+
+            res.Add(new Line(new PointF(Area.Left + 5, Area.Top + 19), new PointF(Area.Left + 6, Area.Top + 21)));
+            res.Add(new Line(new PointF(Area.Right - 5, Area.Top + 19), new PointF(Area.Right - 6, Area.Top + 21)));
+
+            res.Add(new Line(new PointF(Area.Left + 6, Area.Top + 21), new PointF(Area.Left + 10, Area.Top + 25)));
+            res.Add(new Line(new PointF(Area.Right - 6, Area.Top + 21), new PointF(Area.Right - 10, Area.Top + 25)));
+
+            res.Add(new Line(new PointF(Area.Left + 10, Area.Top + 25), new PointF(Area.Left + 13, Area.Top + 26)));
+            res.Add(new Line(new PointF(Area.Right - 10, Area.Top + 25), new PointF(Area.Right - 13, Area.Top + 26)));
+
+            res.Add(new Line(new PointF(Area.Left + 13, Area.Top + 26), new PointF(Area.Right - 13, Area.Top + 26)));
             return res;
-        }
-
-        public override bool IfCollision(Ball ball)
-        {
-            foreach (var ballItem in ball.Bounds)
-            {
-                foreach (var blockItem in Bounds)
-                {
-                    if (ballItem.X == blockItem.X && ballItem.Y == blockItem.Y)
-                    {
-                        System.Windows.Vector normVector = new System.Windows.Vector(blockItem.Y - blockItem.Y, blockItem.X + 1 - blockItem.X);
-                        ball.Direction = ball.Direction - 2 * normVector * ((ball.Direction * normVector) / (normVector * normVector));
-                        ball.Move();
-
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
     }
 }

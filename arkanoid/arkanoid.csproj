@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Ball.cs" />
     <Compile Include="Block.cs" />
+    <Compile Include="BonusBall.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -59,6 +60,7 @@
     </Compile>
     <Compile Include="GameObject.cs" />
     <Compile Include="Level.cs" />
+    <Compile Include="Line.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Moveable.cs" />
     <Compile Include="Pad.cs" />
@@ -101,10 +103,16 @@
     <None Include="Resources\pad_right.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\ball_mid.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\background.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ball_mid.png" />
+    <None Include="Resources\block2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bonusBall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

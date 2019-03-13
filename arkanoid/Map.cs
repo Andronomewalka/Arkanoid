@@ -10,7 +10,7 @@ namespace arkanoid
 {
     public class Map
     {
-        enum Obj { block = 1, pad = 2, ball = 3 }
+        enum Obj { block = 1, pad = 2, ball = 3, bonusBallBlock = 4 }
         private Level level; // текущий уровень
         public PictureBox PictureField { get; private set; } // графическое представление уровня
         public List<GameObject> Objects { get; private set; } // список игровых объектов текущего уровня
@@ -47,6 +47,14 @@ namespace arkanoid
             var pBack = new TextureBrush(level.Background);
             g.FillRectangle(pBack, PictureField.ClientRectangle);
 
+            //string vector = "X: " + (Objects.Find((obj) => obj is Ball) as Ball).Direction.X + " \nY: " + (Objects.Find((obj) => obj is Ball) as Ball).Direction.Y;
+            //System.Drawing.Font drawFont = new System.Drawing.Font("Arial", 16);
+            //System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
+            //float x = 600.0F;
+            //float y = 550.0F;
+            //System.Drawing.StringFormat drawFormat = new System.Drawing.StringFormat();
+            //g.DrawString(vector, drawFont, drawBrush, x, y, drawFormat);
+
             foreach (var item in Objects)
                 g.DrawImage(item.Texture, item.Area);
         }
@@ -76,6 +84,10 @@ namespace arkanoid
                     else if (level.LogicField[i, k] == (int)Obj.ball)
                     {
                         Objects.Add(new Ball(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight)));
+                    }
+                    else if (level.LogicField[i, k] == (int)Obj.bonusBallBlock)
+                    {
+                        Objects.Add(new BonusBall(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight)));
                     }
                     bitmapCoord.X += TileWidth;
                 }

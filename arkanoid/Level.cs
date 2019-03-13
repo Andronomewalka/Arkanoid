@@ -12,12 +12,12 @@ namespace arkanoid
     [Serializable]
     public class Level
     {
-        public int[,] LogicField { get; private set; } // логическое поле игры (загружаем из файла уровня)
+        public int[,] LogicField { get; set; } // логическое поле игры (загружаем из файла уровня)
         public Image Background { get; private set; } // задник
         public int FieldWidth { get; private set; } // размеры логического поля
         public int FieldHeight { get; private set; }
 
-        private  static string path;
+        private static string path;
 
         static Level()
         {
@@ -34,14 +34,14 @@ namespace arkanoid
             LogicField = new int[18, 18]
             {
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
-                { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
-                { 0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0 },
-                { 1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1 },
-                { 1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1 },
-                { 0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0 },
-                { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
-                { 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0 },
+                { 0,1,1,1,1,1,1,1,1,4,1,1,1,1,1,1,1,0 },
+                { 0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 },
+                { 0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 },
+                { 0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 },
+                { 0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 },
+                { 0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 },
+                { 0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,0 },
+                { 0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
@@ -50,7 +50,7 @@ namespace arkanoid
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
             };
             Background = Properties.Resources.background;
             Serialization(levelNum);
@@ -80,7 +80,14 @@ namespace arkanoid
                 current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 2] = 2;
                 current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 1] = 2;
                 current.LogicField[current.LogicField.GetLength(0) - 3, current.LogicField.GetLength(1) - 2] = 3;
-                //current.LogicField[0, 0] = 3;
+
+                //current.LogicField[1, 0] = 2;
+                //current.LogicField[1, 1] = 2;
+                //current.LogicField[1, 2] = 2;
+                //current.LogicField[0, 1] = 3;
+                // current.LogicField[0, 0] = 3;
+                // current.LogicField[0, 1] = 2;
+                // current.LogicField[0, 2] = 2;
             }
             catch (Exception e)
             {

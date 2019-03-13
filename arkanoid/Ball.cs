@@ -1,100 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace arkanoid
 {
     public class Ball : Moveable
     {
+        public List<PointF> RigidBody { get; private set; }
         enum CollisionSide { vertical, horizontal }
+        private DateTime BallHitTimeHorizontal;
+        private DateTime BallHitTimeVertical;
         public bool BondedToPad { get; set; } = true;
-        public Ball(Rectangle area)
+
+        public Ball(RectangleF area)
         {
             Texture = Properties.Resources.ball_mid;
             Area = area;
             Texture.SetResolution(72, 72);
-            Bounds = AreaToBounds(area);
-            Direction = new System.Windows.Vector(1f, -1f);
-            speed = 1f;
+            Body = DefineBody(area);
+            Direction = new System.Windows.Vector(0f, -1f);
+            speed = 5f;
+            RigidBody = DefineRigidBody();
+            BallHitTime = DateTime.Now;
+            BallHitTimeHorizontal = DateTime.Now;
+            BallHitTimeVertical = DateTime.Now;
         }
 
-        protected override List<Point> AreaToBounds(Rectangle area)
+        private List<PointF> DefineRigidBody() // все пиксели шарика
         {
-            List<Point> res = new List<Point>();
+            List<PointF> res = new List<PointF>();
             // Point[] res = new Point[120]; // вычилено опытным путём
             // int Ires = 0;
             int indent = 19;
-            for (int i = area.Y; i <= area.Bottom - 16; i++)
+            for (float i = Area.Top; i <= Area.Bottom - 16; i++)
             {
-                for (int k = area.X + 14; k <= area.Right - 14; k++)
+                for (float k = Area.Left + 14; k <= Area.Right - 14; k++)
                 {
-                    if (((i == area.Y || i == area.Bottom - 16) && k > area.Left + indent && k <= area.Right - indent)
-                        || (k > area.Left + indent && k <= area.Left + indent + 2)
-                            || (k >= area.Right - indent - 2 && k < area.Right - indent))
+                    if (k > Area.Left + indent && k < Area.Right - indent)
                     {
-                        res.Add(new Point(k, i));
+                        res.Add(new PointF(k, i));
                     }
+                    else if (k >= Area.Right - indent)
+                        break;
                 }
 
-                if (i == area.Y + 15)
+                if (i == Area.Y + 15)
                     indent = 19;
-                else if (i == area.Y || i == area.Y + 14)
+                else if (i == Area.Y || i == Area.Y + 14)
                     indent = 17;
-                else if (i == area.Y + 1 || i == area.Y + 13)
+                else if (i == Area.Y + 1 || i == Area.Y + 13)
                     indent = 16;
-                else if (i == area.Y + 2 || i == area.Y + 3
-                    || i == area.Y + 11 || i == area.Y + 12)
+                else if (i == Area.Y + 2 || i == Area.Y + 3
+                    || i == Area.Y + 11 || i == Area.Y + 12)
                     indent = 15;
-                else if (i >= area.Y + 3 && i <= area.Y + 10)
+                else if (i >= Area.Y + 3 && i <= Area.Y + 10)
                     indent = 14;
             }
             return res;
         }
 
+        protected override List<Line> DefineBody(RectangleF area)
+        {
+            List<Line> res = new List<Line>();
+
+            res.Add(new Line(new PointF(Area.Left + 19, Area.Top), new PointF(Area.Right - 19, Area.Top)));
+
+            res.Add(new Line(new PointF(Area.Left + 19, Area.Top), new PointF(Area.Left + 17, Area.Top + 1)));
+            res.Add(new Line(new PointF(Area.Right - 19, Area.Top), new PointF(Area.Right - 17, Area.Top + 1)));
+
+            res.Add(new Line(new PointF(Area.Left + 17, Area.Top + 1), new PointF(Area.Left + 16, Area.Top + 2)));
+            res.Add(new Line(new PointF(Area.Right - 17, Area.Top + 1), new PointF(Area.Right - 16, Area.Top + 2)));
+
+            res.Add(new Line(new PointF(Area.Left + 16, Area.Top + 2), new PointF(Area.Left + 15, Area.Top + 3)));
+            res.Add(new Line(new PointF(Area.Right - 16, Area.Top + 2), new PointF(Area.Right - 15, Area.Top + 3)));
+
+            res.Add(new Line(new PointF(Area.Left + 15, Area.Top + 3), new PointF(Area.Left + 14, Area.Top + 5)));
+            res.Add(new Line(new PointF(Area.Right - 15, Area.Top + 3), new PointF(Area.Right - 14, Area.Top + 5)));
+
+            res.Add(new Line(new PointF(Area.Left + 14, Area.Top + 5), new PointF(Area.Left + 14, Area.Top + 11)));
+            res.Add(new Line(new PointF(Area.Right - 14, Area.Top + 5), new PointF(Area.Right - 14, Area.Top + 11)));
+
+            res.Add(new Line(new PointF(Area.Left + 14, Area.Top + 11), new PointF(Area.Left + 15, Area.Top + 13)));
+            res.Add(new Line(new PointF(Area.Right - 14, Area.Top + 11), new PointF(Area.Right - 15, Area.Top + 13)));
+
+            res.Add(new Line(new PointF(Area.Left + 15, Area.Top + 13), new PointF(Area.Left + 16, Area.Top + 14)));
+            res.Add(new Line(new PointF(Area.Right - 15, Area.Top + 13), new PointF(Area.Right - 16, Area.Top + 14)));
+
+            res.Add(new Line(new PointF(Area.Left + 16, Area.Top + 14), new PointF(Area.Left + 17, Area.Top + 15)));
+            res.Add(new Line(new PointF(Area.Right - 16, Area.Top + 14), new PointF(Area.Right - 17, Area.Top + 15)));
+
+            res.Add(new Line(new PointF(Area.Left + 17, Area.Top + 15), new PointF(Area.Left + 19, Area.Top + 16)));
+            res.Add(new Line(new PointF(Area.Right - 17, Area.Top + 15), new PointF(Area.Right - 19, Area.Top + 16)));
+
+            res.Add(new Line(new PointF(Area.Left + 19, Area.Top + 16), new PointF(Area.Right - 19, Area.Top + 16)));
+
+            return res;
+        }
+
         public override void Move()
         {
-            Rectangle newPos = new Rectangle((int)(Area.X + speed * Direction.X), (int)(Area.Y + speed * Direction.Y), Area.Width, Area.Height);
+            RectangleF newPos = new RectangleF((float)(Area.X + speed * Direction.X), (float)(Area.Y + speed * Direction.Y), Area.Width, Area.Height);
+
             if (newPos.Left >= Map.WindowSize.Right || newPos.Right <= Map.WindowSize.Left)
                 CollisionWith(CollisionSide.horizontal);
             else if (newPos.Top <= Map.WindowSize.Top)
                 CollisionWith(CollisionSide.vertical);
+
             Area = newPos;
-            Bounds = AreaToBounds(Area);
+            RigidBody = DefineRigidBody();
+            Body = DefineBody(Area);
         }
 
-        public void CollisionWith(GameObject obj) // для других объектов
+        public void CollisionWith(Line line)
         {
-            //if (DefineCollisionSide(obj) == CollisionSide.vertical)
-            //    Dy *= -1;
-            //else if (DefineCollisionSide(obj) == CollisionSide.horizontal)
-            //    Dx *= -1;
+            System.Windows.Vector normVector = new System.Windows.Vector(line.A.Y - line.B.Y, line.B.X - line.A.X);
+            Direction = Direction - 2 * normVector * ((Direction * normVector) / (normVector * normVector));
         }
 
         private void CollisionWith(CollisionSide side) // для границ карты
         {
+            DateTime current = DateTime.Now;
             if (side == CollisionSide.vertical)
+            {
+                if ((current - BallHitTimeVertical).TotalMilliseconds < 50)
+                    return;
+
+                BallHitTimeVertical = current;
                 Direction = new System.Windows.Vector(Direction.X, Direction.Y * -1);
+
+            }
             else if (side == CollisionSide.horizontal)
+            {
+                if ((current - BallHitTimeHorizontal).TotalMilliseconds < 50)
+                    return;
+
+                BallHitTimeHorizontal = current;
                 Direction = new System.Windows.Vector(Direction.X * -1, Direction.Y);
-        }
-
-        public override bool IfCollision(Ball ball)
-        {
-            throw new NotImplementedException();
-        }
-
-        // определяем с какой стороны произошло столкновение, 
-        // чтоб знать какое направление шара нужно инвертировать
-        private CollisionSide DefineCollisionSide(GameObject obj)
-        {
-
-            if (obj.Area.Left + 4 >= Area.Right - 16 || obj.Area.Right - 4 <= Area.Left + 15)
-                return CollisionSide.horizontal;
-            else /*if (obj.Area.Bottom <= Area.Top || obj.Area.Top <= Area.Bottom)*/
-                return CollisionSide.vertical;
+            }
         }
     }
 }
