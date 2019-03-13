@@ -19,7 +19,7 @@ namespace arkanoid
             ClientSize = new Size(810, 600);
             CenterToScreen();
             DoubleBuffered = true;
-            run = new RunController(this,1);
+            run = new RunController(this,0);
         }
     }
 }

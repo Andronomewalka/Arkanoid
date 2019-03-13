@@ -6,7 +6,7 @@ namespace arkanoid
 {
     public class Ball : Moveable
     {
-        public List<PointF> RigidBody { get; private set; }
+       // public List<PointF> RigidBody { get; private set; }
         enum CollisionSide { vertical, horizontal }
         private DateTime BallHitTimeHorizontal;
         private DateTime BallHitTimeVertical;
@@ -26,37 +26,9 @@ namespace arkanoid
             BallHitTimeVertical = DateTime.Now;
         }
 
-        private List<PointF> DefineRigidBody() // все пиксели шарика
+        protected override RectangleF DefineRigidBody()
         {
-            List<PointF> res = new List<PointF>();
-            // Point[] res = new Point[120]; // вычилено опытным путём
-            // int Ires = 0;
-            int indent = 19;
-            for (float i = Area.Top; i <= Area.Bottom - 16; i++)
-            {
-                for (float k = Area.Left + 14; k <= Area.Right - 14; k++)
-                {
-                    if (k > Area.Left + indent && k < Area.Right - indent)
-                    {
-                        res.Add(new PointF(k, i));
-                    }
-                    else if (k >= Area.Right - indent)
-                        break;
-                }
-
-                if (i == Area.Y + 15)
-                    indent = 19;
-                else if (i == Area.Y || i == Area.Y + 14)
-                    indent = 17;
-                else if (i == Area.Y + 1 || i == Area.Y + 13)
-                    indent = 16;
-                else if (i == Area.Y + 2 || i == Area.Y + 3
-                    || i == Area.Y + 11 || i == Area.Y + 12)
-                    indent = 15;
-                else if (i >= Area.Y + 3 && i <= Area.Y + 10)
-                    indent = 14;
-            }
-            return res;
+            return new RectangleF(Area.X + 14, Area.Y, 17, 17);
         }
 
         protected override List<Line> DefineBody(RectangleF area)
@@ -111,10 +83,13 @@ namespace arkanoid
             Body = DefineBody(Area);
         }
 
-        public void CollisionWith(Line line)
+        public void CollisionWith(Line? line)
         {
-            System.Windows.Vector normVector = new System.Windows.Vector(line.A.Y - line.B.Y, line.B.X - line.A.X);
-            Direction = Direction - 2 * normVector * ((Direction * normVector) / (normVector * normVector));
+            if (line != null)
+            {
+                System.Windows.Vector normVector = new System.Windows.Vector(line.Value.A.Y - line.Value.B.Y, line.Value.B.X - line.Value.A.X);
+                Direction = Direction - 2 * normVector * ((Direction * normVector) / (normVector * normVector));
+            }
         }
 
         private void CollisionWith(CollisionSide side) // для границ карты

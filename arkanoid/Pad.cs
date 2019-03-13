@@ -16,8 +16,14 @@ namespace arkanoid
             PadPaint();
             Area = area;
             Body = DefineBody(area);
+            RigidBody = DefineRigidBody();
             Direction = new System.Windows.Vector(0f, 0f);
             speed = 0f;
+        }
+
+        protected override RectangleF DefineRigidBody()
+        {
+            return Area;
         }
 
         private void PadPaint()

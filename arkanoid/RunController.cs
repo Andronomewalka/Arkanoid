@@ -24,7 +24,7 @@ namespace arkanoid
             this.parent = parent;
 
             level = Level.Deserialization(levelNum);
-           //   new Level(1); // генерация уровня
+            //     new Level(0); // генерация уровня
             map = new Map(parent, level);
             map.Create();
             FindBallAndPad();
@@ -99,25 +99,30 @@ namespace arkanoid
                         {
                             if (map.Objects[k] != balls[i] && map.Objects[k].IfCollision(balls[i]))
                             {
-                                balls[i].CollisionWith(map.Objects[k].DefineCollisionLine(balls[i]));
+                                Line? CollisionLine = map.Objects[k].DefineCollisionLine(balls[i]);
+                                if (CollisionLine != null)
+                                {
+                                    balls[i].CollisionWith(CollisionLine);
 
-                                if (map.Objects[k] is Ball)
-                                    (map.Objects[k] as Ball).CollisionWith(balls[i].DefineCollisionLine(map.Objects[k] as Ball));
+                                    if (map.Objects[k] is Ball)
+                                        (map.Objects[k] as Ball).CollisionWith(balls[i].DefineCollisionLine(map.Objects[k]));
 
-                                else if (!(map.Objects[k] is Pad))
-                                    map.Objects.RemoveAt(k);
-
-                                break;
-                            }
-                            if (balls[i].Area.Top > 600)
-                            {
-                                map.Objects.Remove(balls[i]);
-                                balls.RemoveAt(i);
-                                if (balls.Count == 0)
-                                    return;
+                                    else if (!(map.Objects[k] is Pad))
+                                        map.Objects.RemoveAt(k);
+                                    break;
+                                }
                             }
                         }
-                        balls[i].Move();
+
+                        if (balls[i].Area.Top > 600)
+                        {
+                            map.Objects.Remove(balls[i]);
+                            balls.RemoveAt(i);
+                            if (balls.Count == 0)
+                                return;
+                        }
+                        else
+                            balls[i].Move();
                     }
                     else
                         balls[i].SetPosition(pad.Area.X + pad.Area.Width / 2, pad.Area.Y - 20);
@@ -148,10 +153,10 @@ namespace arkanoid
             {
                 onPause = !onPause;
                 ChangeCursorState();
-               //if (onPause)
-               //    map.PictureField.MouseMove -= Parent_MouseMove1;
-               //else
-               //    map.PictureField.MouseMove += Parent_MouseMove1;
+                //if (onPause)
+                //    map.PictureField.MouseMove -= Parent_MouseMove1;
+                //else
+                //    map.PictureField.MouseMove += Parent_MouseMove1;
             }
         }
 

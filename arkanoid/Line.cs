@@ -63,26 +63,26 @@ namespace arkanoid
             }
             return false;
         }
-        public bool Contain(Ball ball)
-        {
-            float minY = A.Y < B.Y ? A.Y : B.Y;
-            float maxY = A.Y >= B.Y ? A.Y : B.Y;
-            float minX = A.X < B.X ? A.X : B.X;
-            float maxX = A.X >= B.X ? A.X : B.X;
-            for (float i = minY; i <= maxY; i++)
-            {
-                for (float k = minX; k <= maxX; k++)
-                {
-                    PointF cur = new PointF(k, i);
-                    foreach (var item in ball.RigidBody)
-                    {
-                        if ((int)cur.X == (int)item.X &&
-                            (int)cur.Y == (int)item.Y)
-                            return true;
-                    }
-                }
-            }
-            return false;
-        }
+        //public bool Contain(Ball ball)
+        //{
+        //    float minY = A.Y < B.Y ? A.Y : B.Y;
+        //    float maxY = A.Y >= B.Y ? A.Y : B.Y;
+        //    float minX = A.X < B.X ? A.X : B.X;
+        //    float maxX = A.X >= B.X ? A.X : B.X;
+        //    for (float i = minY; i <= maxY; i++)
+        //    {
+        //        for (float k = minX; k <= maxX; k++)
+        //        {
+        //            PointF cur = new PointF(k, i);
+        //            foreach (var item in ball.RigidBody)
+        //            {
+        //                if ((int)cur.X == (int)item.X &&
+        //                    (int)cur.Y == (int)item.Y)
+        //                    return true;
+        //            }
+        //        }
+        //    }
+        //    return false;
+        //}
     }
 }

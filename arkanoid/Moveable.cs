@@ -17,6 +17,7 @@ namespace arkanoid
         {
             Area = new RectangleF(posX - Area.Width / 2, posY, Area.Width, Area.Height);
             Body = DefineBody(Area);
+            RigidBody = DefineRigidBody();
         }
     }
 }
