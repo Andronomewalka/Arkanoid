@@ -61,6 +61,7 @@
     <Compile Include="GameObject.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Line.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Moveable.cs" />
     <Compile Include="Pad.cs" />
@@ -113,6 +114,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\bonusBall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\block3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bonusBall3.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

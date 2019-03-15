@@ -86,7 +86,7 @@ namespace arkanoid
                 //current.LogicField[1, 2] = 2;
                 //current.LogicField[0, 1] = 3;
                 // current.LogicField[0, 0] = 3;
-                // current.LogicField[0, 1] = 2;
+                // current.LogicField[0, 1] = 1;
                 // current.LogicField[0, 2] = 2;
             }
             catch (Exception e)

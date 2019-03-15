@@ -6,11 +6,11 @@ namespace arkanoid
 {
     public class Ball : Moveable
     {
-       // public List<PointF> RigidBody { get; private set; }
         enum CollisionSide { vertical, horizontal }
-        private DateTime BallHitTimeHorizontal;
-        private DateTime BallHitTimeVertical;
         public bool BondedToPad { get; set; } = true;
+        public PointF Center { get; private set; }
+        public DateTime BallHitTime { get; protected set; }
+        List<GameObject> recentCollisionObjects; // иногда при столкновениях объекты залипают друг с другом, из-за того что не успевая покинуть область коллизии, меняют направление
 
         public Ball(RectangleF area)
         {
@@ -18,14 +18,23 @@ namespace arkanoid
             Area = area;
             Texture.SetResolution(72, 72);
             Body = DefineBody(area);
+            RigidBody = DefineRigidBody();
+            Center = DefineCenter();
             Direction = new System.Windows.Vector(0f, -1f);
             speed = 5f;
-            RigidBody = DefineRigidBody();
-            BallHitTime = DateTime.Now;
-            BallHitTimeHorizontal = DateTime.Now;
-            BallHitTimeVertical = DateTime.Now;
+            recentCollisionObjects = new List<GameObject>();
         }
 
+        private PointF DefineCenter()
+        {
+            PointF res = new PointF(RigidBody.Left + RigidBody.Width / 2, RigidBody.Top + RigidBody.Height / 2);
+
+            // System.Windows.Point cur = new System.Windows.Point(Area.X+14,Area.Y+4);
+            // System.Windows.Point intBallCenter = new System.Windows.Point((int)res.X, (int)res.Y);
+            // double distance = Math.Abs((intBallCenter - cur).LengthSquared);
+
+            return res;
+        }
         protected override RectangleF DefineRigidBody()
         {
             return new RectangleF(Area.X + 14, Area.Y, 17, 17);
@@ -73,44 +82,112 @@ namespace arkanoid
         {
             RectangleF newPos = new RectangleF((float)(Area.X + speed * Direction.X), (float)(Area.Y + speed * Direction.Y), Area.Width, Area.Height);
 
-            if (newPos.Left >= Map.WindowSize.Right || newPos.Right <= Map.WindowSize.Left)
+            if (RigidBody.Left <= Map.WindowSize.Left || RigidBody.Right >= Map.WindowSize.Right)
                 CollisionWith(CollisionSide.horizontal);
-            else if (newPos.Top <= Map.WindowSize.Top)
+            else if (RigidBody.Top <= Map.WindowSize.Top || RigidBody.Bottom >= Map.WindowSize.Bottom)
                 CollisionWith(CollisionSide.vertical);
 
-            Area = newPos;
-            RigidBody = DefineRigidBody();
-            Body = DefineBody(Area);
+            else
+            {
+                Area = newPos;
+                Body = DefineBody(Area);
+                RigidBody = DefineRigidBody();
+                Center = DefineCenter();
+            }
+            DefineRecentCollisionObjects();
         }
 
-        public void CollisionWith(Line? line)
+        private void DefineRecentCollisionObjects()
         {
-            if (line != null)
+            double minDistance = 85;
+            System.Windows.Point intBallCenter = new System.Windows.Point((int)Center.X, (int)Center.Y);
+
+            for (int i = recentCollisionObjects.Count - 1; i >= 0; i--)
+            {
+                bool stillCollision = false;
+
+                foreach (var line in recentCollisionObjects[i].Body)
+                {
+                    int minY = (int)(line.A.Y < line.B.Y ? line.A.Y : line.B.Y);
+                    int maxY = (int)(line.A.Y >= line.B.Y ? line.A.Y : line.B.Y);
+                    int minX = (int)(line.A.X < line.B.X ? line.A.X : line.B.X);
+                    int maxX = (int)(line.A.X >= line.B.X ? line.A.X : line.B.X);
+
+                    for (int k = minY; k <= maxY; k++)
+                    {
+                        if (stillCollision)
+                            break;
+
+                        for (int l = minX; l <= maxX; l++)
+                        {
+                            System.Windows.Point cur = new System.Windows.Point(l, k);
+                            double distance = Math.Abs((intBallCenter - cur).LengthSquared);
+                            if (distance < minDistance)
+                            {
+                                stillCollision = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!stillCollision)
+                    recentCollisionObjects.Remove(recentCollisionObjects[i]);
+            }
+        }
+
+        public override void SetPosition(float posX, float posY)
+        {
+            Area = new RectangleF(posX, posY, Area.Width, Area.Height);
+            Body = DefineBody(Area);
+            RigidBody = DefineRigidBody();
+            Center = DefineCenter();
+        }
+
+        public bool CollisionWith(GameObject obj, Line? line)
+        {
+            bool res = true;
+
+            if (!recentCollisionObjects.Contains(obj) && line != null)
             {
                 System.Windows.Vector normVector = new System.Windows.Vector(line.Value.A.Y - line.Value.B.Y, line.Value.B.X - line.Value.A.X);
-                Direction = Direction - 2 * normVector * ((Direction * normVector) / (normVector * normVector));
+                System.Windows.Vector newDirection = Direction - 2 * normVector * ((Direction * normVector) / (normVector * normVector));
+
+                string directXText = Direction.X.ToString("N5");
+                string directYText = Direction.Y.ToString("N5");
+                string newDirectXText = newDirection.X.ToString("N5");
+                string newDirectYText = newDirection.Y.ToString("N5");
+                if (directXText.Equals(newDirectXText) &&
+                    directYText.Equals(newDirectYText))
+                {
+                    res = false;
+                }
+                newDirection.Normalize();
+                Direction = newDirection;
+
+                // добавялем в словарь объектов коллизий, те, которые не разрушаются при столкновении
+                if (obj is Ball || obj is Pad)
+                    recentCollisionObjects.Add(obj);
             }
+            else
+            {
+
+            }
+            return res;
         }
 
         private void CollisionWith(CollisionSide side) // для границ карты
         {
-            DateTime current = DateTime.Now;
             if (side == CollisionSide.vertical)
             {
-                if ((current - BallHitTimeVertical).TotalMilliseconds < 50)
-                    return;
-
-                BallHitTimeVertical = current;
+                RectangleF newPos = new RectangleF((float)(Area.X - speed * Direction.X), (float)(Area.Y - speed * Direction.Y), Area.Width, Area.Height);
                 Direction = new System.Windows.Vector(Direction.X, Direction.Y * -1);
-
+                SetPosition(newPos.Left, newPos.Top);
             }
             else if (side == CollisionSide.horizontal)
             {
-                if ((current - BallHitTimeHorizontal).TotalMilliseconds < 50)
-                    return;
-
-                BallHitTimeHorizontal = current;
+                RectangleF newPos = new RectangleF((float)(Area.X - speed * Direction.X), (float)(Area.Y - speed * Direction.Y), Area.Width, Area.Height);
                 Direction = new System.Windows.Vector(Direction.X * -1, Direction.Y);
+                SetPosition(newPos.Left, newPos.Top);
             }
         }
     }

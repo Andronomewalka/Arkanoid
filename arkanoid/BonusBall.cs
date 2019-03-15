@@ -11,7 +11,7 @@ namespace arkanoid
     {
         public BonusBall(RectangleF area) : base(area)
         {
-            Texture = Properties.Resources.bonusBall;
+            Texture = Properties.Resources.bonusBall3;
         }
     }
 }

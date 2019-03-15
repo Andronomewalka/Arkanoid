@@ -23,8 +23,8 @@ namespace arkanoid
         public Map(Form1 parent, Level level)
         {
             WindowSize = new Rectangle(
-                    new Point(parent.ClientRectangle.X + 30, parent.ClientRectangle.Y),
-                    new Size(parent.ClientRectangle.Width - 60, parent.ClientRectangle.Height - 50));
+                    new Point(parent.ClientRectangle.X, parent.ClientRectangle.Y),
+                    new Size(parent.ClientRectangle.Width, parent.ClientRectangle.Height));
             Objects = new List<GameObject>();
 
             PictureField = new PictureBox()

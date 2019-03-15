@@ -102,13 +102,19 @@ namespace arkanoid
                                 Line? CollisionLine = map.Objects[k].DefineCollisionLine(balls[i]);
                                 if (CollisionLine != null)
                                 {
-                                    balls[i].CollisionWith(CollisionLine);
+
+                                    System.Windows.Vector previousDirection = balls[i].Direction;
+
+                                    bool ChangeDirectionResult = balls[i].CollisionWith(map.Objects[k], CollisionLine);
+                                    if (!ChangeDirectionResult)
+                                        Log.Write(map.Objects[k].RigidBody, balls[i].RigidBody, CollisionLine, previousDirection, balls[i].Direction);
 
                                     if (map.Objects[k] is Ball)
-                                        (map.Objects[k] as Ball).CollisionWith(balls[i].DefineCollisionLine(map.Objects[k]));
+                                        (map.Objects[k] as Ball).CollisionWith(balls[i], balls[i].DefineCollisionLine(map.Objects[k] as Ball));
 
                                     else if (!(map.Objects[k] is Pad))
                                         map.Objects.RemoveAt(k);
+
                                     break;
                                 }
                             }
@@ -125,7 +131,7 @@ namespace arkanoid
                             balls[i].Move();
                     }
                     else
-                        balls[i].SetPosition(pad.Area.X + pad.Area.Width / 2, pad.Area.Y - 20);
+                        balls[i].SetPosition(pad.Area.X + pad.Area.Width / 3, pad.Area.Y - 20);
                 }
                 map.PictureField.Invalidate();
             }

@@ -103,9 +103,29 @@ namespace arkanoid.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap block3 {
+            get {
+                object obj = ResourceManager.GetObject("block3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap bonusBall {
             get {
                 object obj = ResourceManager.GetObject("bonusBall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap bonusBall3 {
+            get {
+                object obj = ResourceManager.GetObject("bonusBall3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
