@@ -21,7 +21,6 @@ namespace arkanoid
             if (RigidBody.Left < ball.RigidBody.Right && RigidBody.Right > ball.RigidBody.Left
                  && RigidBody.Top < ball.RigidBody.Bottom && RigidBody.Bottom > ball.RigidBody.Top)
             {
-                Collision?.Invoke(this, EventArgs.Empty);
                 return true;
             }
 
@@ -53,6 +52,8 @@ namespace arkanoid
                     }
                 }
             }
+            if (minDistaneLine != null)
+                Collision?.Invoke(this, EventArgs.Empty);
             return minDistaneLine;
         }
     }

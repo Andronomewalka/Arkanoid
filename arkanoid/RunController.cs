@@ -10,27 +10,29 @@ namespace arkanoid
 {
     class RunController
     {
-        Form1 parent;
-        Map map;
-        Level level;
-        Point cursor;
-        Timer frame;
+        private Form1 parent;
+        private Map map;
+        private Level level;
+        private Point cursor;
+        private Timer frame;
+        private Pad pad;
+        private List<Ball> balls;
+        private Stats stats;
+        private bool onPause;
 
-        Pad pad;
-        List<Ball> balls;
-        bool onPause;
         public RunController(Form1 parent, int levelNum)
         {
             this.parent = parent;
 
+            //     new Level(2); // генерация уровня
             level = Level.Deserialization(levelNum);
-            //     new Level(0); // генерация уровня
             map = new Map(parent, level);
             map.Create();
             FindBallAndPad();
             CustomBlockEventSign();
             ChangeCursorState();
 
+            stats = new Stats(map.PictureField);
             frame = new Timer();
             frame.Interval = 5;
             frame.Tick += Frame_Tick;
@@ -45,15 +47,15 @@ namespace arkanoid
         {
             foreach (var item in map.Objects)
             {
-                if (item is BonusBall)
+                if (item is BonusBallBlock)
                     item.Collision += Item_Collision;
             }
         }
 
         private void Item_Collision(object sender, EventArgs e)
         {
-            BonusBall cur = sender as BonusBall;
-            if (cur != null)
+            BonusBallBlock cur = sender as BonusBallBlock;
+            if (cur != null && cur.Iteration == 0)
             {
                 int newBallIndex = map.Objects.FindIndex((obj) => obj == cur) + 1;
                 // если отправитель события BonusBall - добалвяем шарик на место бонусного блока + 1
@@ -112,7 +114,7 @@ namespace arkanoid
                                     if (map.Objects[k] is Ball)
                                         (map.Objects[k] as Ball).CollisionWith(balls[i], balls[i].DefineCollisionLine(map.Objects[k] as Ball));
 
-                                    else if (!(map.Objects[k] is Pad))
+                                    else if (map.Objects[k] is Block && (map.Objects[k] as Block).Iteration == 0)
                                         map.Objects.RemoveAt(k);
 
                                     break;
@@ -122,9 +124,19 @@ namespace arkanoid
 
                         if (balls[i].Area.Top > 600)
                         {
-                            map.Objects.Remove(balls[i]);
-                            balls.RemoveAt(i);
-                            if (balls.Count == 0)
+                            if (balls.Count == 1)
+                            {
+                                balls[i].BondedToPad = true;
+                                balls[i].SetPosition(pad.Area.X + pad.Area.Width / 3, pad.Area.Y - 20);
+                                balls[i].Direction = new System.Windows.Vector(0, -1);
+                                stats.Life--;
+                            }
+                            else if (balls.Count != 0)
+                            {
+                                map.Objects.Remove(balls[i]);
+                                balls.RemoveAt(i);
+                            }
+                            else
                                 return;
                         }
                         else

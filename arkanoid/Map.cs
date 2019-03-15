@@ -10,7 +10,9 @@ namespace arkanoid
 {
     public class Map
     {
-        enum Obj { block = 1, pad = 2, ball = 3, bonusBallBlock = 4 }
+        enum Obj { redBlock = 1, pad = 2, ball = 3, redBonusBallBlock = 4,
+            orangeBlock = 5, orangeBonusBallBlock = 6,
+        yellowBlock = 7, yellowBonusBallBlock = 8}
         private Level level; // текущий уровень
         public PictureBox PictureField { get; private set; } // графическое представление уровня
         public List<GameObject> Objects { get; private set; } // список игровых объектов текущего уровня
@@ -34,8 +36,8 @@ namespace arkanoid
             };
             PictureField.Paint += PictureField_Paint;
 
-            TileWidth = Properties.Resources.block.Width;
-            TileHeight = Properties.Resources.block.Height;
+            TileWidth = Properties.Resources.redBlock.Width;
+            TileHeight = Properties.Resources.redBlock.Height;
 
             this.level = level;
         }
@@ -46,14 +48,6 @@ namespace arkanoid
 
             var pBack = new TextureBrush(level.Background);
             g.FillRectangle(pBack, PictureField.ClientRectangle);
-
-            //string vector = "X: " + (Objects.Find((obj) => obj is Ball) as Ball).Direction.X + " \nY: " + (Objects.Find((obj) => obj is Ball) as Ball).Direction.Y;
-            //System.Drawing.Font drawFont = new System.Drawing.Font("Arial", 16);
-            //System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
-            //float x = 600.0F;
-            //float y = 550.0F;
-            //System.Drawing.StringFormat drawFormat = new System.Drawing.StringFormat();
-            //g.DrawString(vector, drawFont, drawBrush, x, y, drawFormat);
 
             foreach (var item in Objects)
                 g.DrawImage(item.Texture, item.Area);
@@ -70,9 +64,9 @@ namespace arkanoid
             {
                 for (int k = 0; k < level.FieldWidth; k++)
                 {
-                    if (level.LogicField[i, k] == (int)Obj.block)
+                    if (level.LogicField[i, k] == (int)Obj.redBlock)
                     {
-                        Objects.Add(new Block(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight)));
+                        Objects.Add(new Block(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight), 1));
                     }
                     else if (level.LogicField[i, k] == (int)Obj.pad)
                     {
@@ -85,9 +79,25 @@ namespace arkanoid
                     {
                         Objects.Add(new Ball(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight)));
                     }
-                    else if (level.LogicField[i, k] == (int)Obj.bonusBallBlock)
+                    else if (level.LogicField[i, k] == (int)Obj.redBonusBallBlock)
                     {
-                        Objects.Add(new BonusBall(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight)));
+                        Objects.Add(new BonusBallBlock(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight),1));
+                    }
+                    else if (level.LogicField[i, k] == (int)Obj.orangeBlock)
+                    {
+                        Objects.Add(new Block(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight), 2));
+                    }
+                    else if (level.LogicField[i, k] == (int)Obj.orangeBonusBallBlock)
+                    {
+                        Objects.Add(new BonusBallBlock(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight), 2));
+                    }
+                    else if (level.LogicField[i, k] == (int)Obj.yellowBlock)
+                    {
+                        Objects.Add(new Block(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight), 3));
+                    }
+                    else if (level.LogicField[i, k] == (int)Obj.yellowBonusBallBlock)
+                    {
+                        Objects.Add(new BonusBallBlock(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight), 3));
                     }
                     bitmapCoord.X += TileWidth;
                 }

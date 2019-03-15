@@ -82,12 +82,19 @@ namespace arkanoid
         {
             RectangleF newPos = new RectangleF((float)(Area.X + speed * Direction.X), (float)(Area.Y + speed * Direction.Y), Area.Width, Area.Height);
 
+            bool outOfscreen = false;
             if (RigidBody.Left <= Map.WindowSize.Left || RigidBody.Right >= Map.WindowSize.Right)
+            {
                 CollisionWith(CollisionSide.horizontal);
-            else if (RigidBody.Top <= Map.WindowSize.Top || RigidBody.Bottom >= Map.WindowSize.Bottom)
+                outOfscreen = true;
+            }
+            if (RigidBody.Top <= Map.WindowSize.Top /*|| RigidBody.Bottom >= Map.WindowSize.Bottom*/)
+            {
                 CollisionWith(CollisionSide.vertical);
+                outOfscreen = true;
+            }
 
-            else
+            if (!outOfscreen)
             {
                 Area = newPos;
                 Body = DefineBody(Area);
@@ -137,10 +144,14 @@ namespace arkanoid
 
         public override void SetPosition(float posX, float posY)
         {
+            // if (RigidBody.Left > Map.WindowSize.Left &&
+            //     RigidBody.Right < Map.WindowSize.Right)
+            // {
             Area = new RectangleF(posX, posY, Area.Width, Area.Height);
             Body = DefineBody(Area);
             RigidBody = DefineRigidBody();
             Center = DefineCenter();
+            //  }
         }
 
         public bool CollisionWith(GameObject obj, Line? line)
@@ -164,13 +175,10 @@ namespace arkanoid
                 newDirection.Normalize();
                 Direction = newDirection;
 
-                // добавялем в словарь объектов коллизий, те, которые не разрушаются при столкновении
-                if (obj is Ball || obj is Pad)
+                // добавялем в список коллизий те объекты, которые не разрушаются при столкновении
+                if (obj is Ball || obj is Pad ||
+                    (obj is Block && (obj as Block).Iteration != 0))
                     recentCollisionObjects.Add(obj);
-            }
-            else
-            {
-
             }
             return res;
         }

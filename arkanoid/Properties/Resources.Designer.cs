@@ -83,9 +83,9 @@ namespace arkanoid.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap block {
+        internal static System.Drawing.Bitmap orangeBlock {
             get {
-                object obj = ResourceManager.GetObject("block", resourceCulture);
+                object obj = ResourceManager.GetObject("orangeBlock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,39 +93,9 @@ namespace arkanoid.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap block2 {
+        internal static System.Drawing.Bitmap orangeBonusBallBlock {
             get {
-                object obj = ResourceManager.GetObject("block2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap block3 {
-            get {
-                object obj = ResourceManager.GetObject("block3", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap bonusBall {
-            get {
-                object obj = ResourceManager.GetObject("bonusBall", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap bonusBall3 {
-            get {
-                object obj = ResourceManager.GetObject("bonusBall3", resourceCulture);
+                object obj = ResourceManager.GetObject("orangeBonusBallBlock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -156,6 +126,36 @@ namespace arkanoid.Properties {
         internal static System.Drawing.Bitmap pad_right {
             get {
                 object obj = ResourceManager.GetObject("pad_right", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap redBlock {
+            get {
+                object obj = ResourceManager.GetObject("redBlock", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap redBonusBallBlock {
+            get {
+                object obj = ResourceManager.GetObject("redBonusBallBlock", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap yellowBonusBallBlock {
+            get {
+                object obj = ResourceManager.GetObject("yellowBonusBallBlock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

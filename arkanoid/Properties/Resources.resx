@@ -124,20 +124,11 @@
   <data name="ball_mid" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ball_mid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="block" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\block.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="orangeBlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\orangeBlock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="block2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\block2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="block3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\block3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bonusBall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bonusBall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bonusBall3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bonusBall3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="orangeBonusBallBlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\orangeBonusBallBlock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="pad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -147,5 +138,14 @@
   </data>
   <data name="pad_right" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pad_right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redBlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redBlock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redBonusBallBlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redBonusBallBlock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellowBonusBallBlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\yellowBonusBallBlock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

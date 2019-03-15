@@ -7,11 +7,24 @@ using System.Threading.Tasks;
 
 namespace arkanoid
 {
-    public class BonusBall : Block
+    public class BonusBallBlock : Block
     {
-        public BonusBall(RectangleF area) : base(area)
+        public BonusBallBlock(RectangleF area, int iteration) : base(area, iteration)
         {
-            Texture = Properties.Resources.bonusBall3;
+            Texture = DefineTexture();
         }
+
+        protected override Bitmap DefineTexture()
+        {
+            if (Iteration == 1)
+                return Properties.Resources.redBonusBallBlock;
+            else if (Iteration == 2)
+                return Properties.Resources.orangeBonusBallBlock;
+            else if (Iteration == 3)
+                return Properties.Resources.yellowBonusBallBlock;
+
+            return Properties.Resources.redBonusBallBlock;
+        }
+
     }
 }

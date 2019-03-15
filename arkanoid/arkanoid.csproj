@@ -68,6 +68,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunController.cs" />
+    <Compile Include="Stats.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -92,9 +93,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\block.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\pad.png" />
   </ItemGroup>
   <ItemGroup>
@@ -110,16 +108,19 @@
     <None Include="Resources\background.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\block2.png" />
+    <None Include="Resources\orangeBlock.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\bonusBall.png" />
+    <None Include="Resources\redBlock.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\block3.png" />
+    <None Include="Resources\redBonusBallBlock.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\bonusBall3.png" />
+    <None Include="Resources\orangeBonusBallBlock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yellowBonusBallBlock.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

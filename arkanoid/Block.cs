@@ -9,13 +9,32 @@ namespace arkanoid
 {
     public class Block : GameObject
     {
-        public Block(RectangleF area)
+        public int Iteration { get; private set; } // количество ударов необходимое сделать до разрушения блока
+        public Block(RectangleF area, int iteration)
         {
-            Texture = Properties.Resources.block3;
+            Iteration = iteration;
+            Texture = DefineTexture();
             Area = area;
             Texture.SetResolution(72, 72);
             Body = DefineBody(area);
             RigidBody = DefineRigidBody();
+            Collision += Block_Collision;
+        }
+
+        protected void Block_Collision(object sender, EventArgs e)
+        {
+            Iteration--;
+            Texture = DefineTexture();
+        }
+
+        protected virtual Bitmap DefineTexture()
+        {
+            if (Iteration == 1)
+                return Properties.Resources.redBlock;
+            else if (Iteration == 2)
+                return Properties.Resources.orangeBlock;
+
+            return Properties.Resources.redBlock;
         }
 
         protected override RectangleF DefineRigidBody()
