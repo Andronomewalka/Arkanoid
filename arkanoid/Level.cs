@@ -37,6 +37,7 @@ namespace arkanoid
             // 6 - оранжевый бонус шар блок
             // 7 - желтый блок
             // 8 - желтый бонус шар блок
+            // 9 - бонус
             LogicField = new int[18, 18]
             {
                 { 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0 },
@@ -91,7 +92,7 @@ namespace arkanoid
                 //current.LogicField[1, 1] = 2;
                 //current.LogicField[1, 2] = 2;
                 //current.LogicField[0, 1] = 3;
-                // current.LogicField[0, 0] = 3;
+                 current.LogicField[0, 0] = 9;
                 // current.LogicField[0, 1] = 1;
                 // current.LogicField[0, 2] = 2;
             }

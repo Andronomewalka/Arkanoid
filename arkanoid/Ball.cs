@@ -4,43 +4,40 @@ using System.Drawing;
 
 namespace arkanoid
 {
-    public class Ball : Moveable
+    public class Ball : GameObject, IChangePosition
     {
         enum CollisionSide { vertical, horizontal }
+        protected float speed; // скорость
+        List<GameObject> recentCollisionObjects; // иногда при столкновениях объекты залипают друг с другом, из-за того что не успевая покинуть область коллизии, меняют направление
+        public System.Windows.Vector Direction { get; set; }
         public bool BondedToPad { get; set; } = true;
         public PointF Center { get; private set; }
-        public DateTime BallHitTime { get; protected set; }
-        List<GameObject> recentCollisionObjects; // иногда при столкновениях объекты залипают друг с другом, из-за того что не успевая покинуть область коллизии, меняют направление
 
         public Ball(RectangleF area)
         {
             Texture = Properties.Resources.ball_mid;
             Area = area;
             Texture.SetResolution(72, 72);
-            Body = DefineBody(area);
+            Body = DefineBody();
             RigidBody = DefineRigidBody();
             Center = DefineCenter();
             Direction = new System.Windows.Vector(0f, -1f);
             speed = 5f;
             recentCollisionObjects = new List<GameObject>();
+            LineTexture = DefineLineTexture();
         }
 
         private PointF DefineCenter()
         {
-            PointF res = new PointF(RigidBody.Left + RigidBody.Width / 2, RigidBody.Top + RigidBody.Height / 2);
-
-            // System.Windows.Point cur = new System.Windows.Point(Area.X+14,Area.Y+4);
-            // System.Windows.Point intBallCenter = new System.Windows.Point((int)res.X, (int)res.Y);
-            // double distance = Math.Abs((intBallCenter - cur).LengthSquared);
-
-            return res;
+            return new PointF(RigidBody.Left + RigidBody.Width / 2, 
+                RigidBody.Top + RigidBody.Height / 2);
         }
         protected override RectangleF DefineRigidBody()
         {
             return new RectangleF(Area.X + 14, Area.Y, 17, 17);
         }
 
-        protected override List<Line> DefineBody(RectangleF area)
+        protected override List<Line> DefineBody()
         {
             List<Line> res = new List<Line>();
 
@@ -78,7 +75,7 @@ namespace arkanoid
             return res;
         }
 
-        public override void Move()
+        public void Move()
         {
             RectangleF newPos = new RectangleF((float)(Area.X + speed * Direction.X), (float)(Area.Y + speed * Direction.Y), Area.Width, Area.Height);
 
@@ -97,60 +94,33 @@ namespace arkanoid
             if (!outOfscreen)
             {
                 Area = newPos;
-                Body = DefineBody(Area);
+                Body = DefineBody();
                 RigidBody = DefineRigidBody();
                 Center = DefineCenter();
+                LineTexture = DefineLineTexture();
             }
             DefineRecentCollisionObjects();
         }
 
         private void DefineRecentCollisionObjects()
         {
-            double minDistance = 85;
-            System.Windows.Point intBallCenter = new System.Windows.Point((int)Center.X, (int)Center.Y);
-
             for (int i = recentCollisionObjects.Count - 1; i >= 0; i--)
             {
-                bool stillCollision = false;
-
-                foreach (var line in recentCollisionObjects[i].Body)
-                {
-                    int minY = (int)(line.A.Y < line.B.Y ? line.A.Y : line.B.Y);
-                    int maxY = (int)(line.A.Y >= line.B.Y ? line.A.Y : line.B.Y);
-                    int minX = (int)(line.A.X < line.B.X ? line.A.X : line.B.X);
-                    int maxX = (int)(line.A.X >= line.B.X ? line.A.X : line.B.X);
-
-                    for (int k = minY; k <= maxY; k++)
-                    {
-                        if (stillCollision)
-                            break;
-
-                        for (int l = minX; l <= maxX; l++)
-                        {
-                            System.Windows.Point cur = new System.Windows.Point(l, k);
-                            double distance = Math.Abs((intBallCenter - cur).LengthSquared);
-                            if (distance < minDistance)
-                            {
-                                stillCollision = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (!stillCollision)
-                    recentCollisionObjects.Remove(recentCollisionObjects[i]);
+                if (!recentCollisionObjects[i].IfCollision(this))
+                    recentCollisionObjects.RemoveAt(i);
             }
         }
 
-        public override void SetPosition(float posX, float posY)
+        public void SetPosition(float posX, float posY)
         {
             // if (RigidBody.Left > Map.WindowSize.Left &&
             //     RigidBody.Right < Map.WindowSize.Right)
             // {
             Area = new RectangleF(posX, posY, Area.Width, Area.Height);
-            Body = DefineBody(Area);
+            Body = DefineBody();
             RigidBody = DefineRigidBody();
             Center = DefineCenter();
+            LineTexture = DefineLineTexture();
             //  }
         }
 
@@ -161,7 +131,16 @@ namespace arkanoid
             if (!recentCollisionObjects.Contains(obj) && line != null)
             {
                 System.Windows.Vector normVector = new System.Windows.Vector(line.Value.A.Y - line.Value.B.Y, line.Value.B.X - line.Value.A.X);
-                System.Windows.Vector newDirection = Direction - 2 * normVector * ((Direction * normVector) / (normVector * normVector));
+                //if (normVector * Direction == 0)
+                //    res = false;
+                //if (normVector * Direction < 0)
+                //{
+                //    normVector.Negate();
+                //    double some = normVector * Direction;
+                //}
+                normVector.Normalize();
+                System.Windows.Vector newDirection = Direction - 2 * (Direction * normVector) * normVector;
+               // System.Windows.Vector newDirection = Direction - 2 * normVector * ((Direction * normVector) / (normVector * normVector));
 
                 string directXText = Direction.X.ToString("N5");
                 string directYText = Direction.Y.ToString("N5");
@@ -172,7 +151,6 @@ namespace arkanoid
                 {
                     res = false;
                 }
-                newDirection.Normalize();
                 Direction = newDirection;
 
                 // добавялем в список коллизий те объекты, которые не разрушаются при столкновении

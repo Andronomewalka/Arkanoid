@@ -124,6 +124,12 @@
   <data name="ball_mid" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ball_mid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="bonusBlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bonusBlock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="life" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\life.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="orangeBlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\orangeBlock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

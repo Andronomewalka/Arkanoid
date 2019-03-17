@@ -12,20 +12,42 @@ namespace arkanoid
         public event EventHandler Collision;
         public List<Line> Body { get; protected set; } // границы объекта хранятся отрезками Line, для расчета нормали, и отраженного вектора направления шара
         public RectangleF RigidBody { get; protected set; } // твердое тело предмета, используется для выявления коллизий
+        public Bitmap LineTexture { get; protected set; }
         public Bitmap Texture { get; protected set; } // текстура
         public RectangleF Area { get; protected set; } // тайл, занимаемый объектом 
-        protected abstract List<Line> DefineBody(RectangleF area); // парсим тайл на границы объекта
         protected abstract RectangleF DefineRigidBody(); // опеределяем его твердое тело
-        public virtual bool IfCollision(GameObject ball)
+
+        protected virtual List<Line> DefineBody() // парсим тайл на границы объекта
         {
-            if (RigidBody.Left < ball.RigidBody.Right && RigidBody.Right > ball.RigidBody.Left
-                 && RigidBody.Top < ball.RigidBody.Bottom && RigidBody.Bottom > ball.RigidBody.Top)
+            List<Line> res = new List<Line>();
+            res.Add(new Line(new PointF(RigidBody.Left, RigidBody.Top), new PointF(RigidBody.Right, RigidBody.Top)));
+            res.Add(new Line(new PointF(RigidBody.Left, RigidBody.Top), new PointF(RigidBody.Left, RigidBody.Bottom)));
+            res.Add(new Line(new PointF(RigidBody.Right, RigidBody.Top), new PointF(RigidBody.Right, RigidBody.Bottom)));
+            res.Add(new Line(new PointF(RigidBody.Left, RigidBody.Bottom), new PointF(RigidBody.Right, RigidBody.Bottom)));
+            return res;
+        }
+        public virtual bool IfCollision(GameObject obj)
+        {
+            if (RigidBody.Left < obj.RigidBody.Right && RigidBody.Right > obj.RigidBody.Left
+                 && RigidBody.Top < obj.RigidBody.Bottom && RigidBody.Bottom > obj.RigidBody.Top)
             {
                 return true;
             }
 
             return false;
         }
+
+        public static bool IfCollision(GameObject obj, RectangleF rect)
+        {
+            if (rect.Left < obj.RigidBody.Right && rect.Right > obj.RigidBody.Left
+                 && rect.Top < obj.RigidBody.Bottom && rect.Bottom > obj.RigidBody.Top)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public Line? DefineCollisionLine(Ball ball)
         {
             double minDistance = 85;
@@ -55,6 +77,21 @@ namespace arkanoid
             if (minDistaneLine != null)
                 Collision?.Invoke(this, EventArgs.Empty);
             return minDistaneLine;
+        }
+
+        protected virtual Bitmap DefineLineTexture()
+        {
+            Bitmap bitmap = new Bitmap(Texture.Width+1, Texture.Height+1);
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                Pen pen = new Pen(Color.Black);
+                for (int i = 0; i < Body.Count; i++)
+                {
+                    g.DrawLine(pen, Body[i].A.X - Area.X, Body[i].A.Y - Area.Y,
+                        Body[i].B.X - Area.X, Body[i].B.Y - Area.Y);
+                }
+            }
+            return bitmap;
         }
     }
 }

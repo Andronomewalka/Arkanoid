@@ -7,6 +7,22 @@ using System.Threading.Tasks;
 
 namespace arkanoid
 {
+
+    public class BonusBlock : Block
+    {
+        
+        public BonusBlock(RectangleF area, int iteration) : base(area, iteration)
+        {
+            Texture = DefineTexture();
+        }
+
+        protected override Bitmap DefineTexture()
+        {
+            return Properties.Resources.bonusBlock;
+        }
+    }
+
+
     public class BonusBallBlock : Block
     {
         public BonusBallBlock(RectangleF area, int iteration) : base(area, iteration)
@@ -25,6 +41,5 @@ namespace arkanoid
 
             return Properties.Resources.redBonusBallBlock;
         }
-
     }
 }

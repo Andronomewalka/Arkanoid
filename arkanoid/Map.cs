@@ -12,7 +12,7 @@ namespace arkanoid
     {
         enum Obj { redBlock = 1, pad = 2, ball = 3, redBonusBallBlock = 4,
             orangeBlock = 5, orangeBonusBallBlock = 6,
-        yellowBlock = 7, yellowBonusBallBlock = 8}
+        yellowBlock = 7, yellowBonusBallBlock = 8, bonus = 9}
         private Level level; // текущий уровень
         public PictureBox PictureField { get; private set; } // графическое представление уровня
         public List<GameObject> Objects { get; private set; } // список игровых объектов текущего уровня
@@ -98,6 +98,10 @@ namespace arkanoid
                     else if (level.LogicField[i, k] == (int)Obj.yellowBonusBallBlock)
                     {
                         Objects.Add(new BonusBallBlock(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight), 3));
+                    }
+                    else if (level.LogicField[i, k] == (int)Obj.bonus)
+                    {
+                        Objects.Add(new BonusBlock(new Rectangle(bitmapCoord.X, bitmapCoord.Y, TileWidth, TileHeight), 1));
                     }
                     bitmapCoord.X += TileWidth;
                 }

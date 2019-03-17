@@ -16,9 +16,10 @@ namespace arkanoid
             Texture = DefineTexture();
             Area = area;
             Texture.SetResolution(72, 72);
-            Body = DefineBody(area);
+            Body = DefineBody();
             RigidBody = DefineRigidBody();
             Collision += Block_Collision;
+            LineTexture = DefineLineTexture();
         }
 
         protected void Block_Collision(object sender, EventArgs e)
@@ -42,7 +43,7 @@ namespace arkanoid
             return new RectangleF(Area.Left + 1, Area.Y + 1, 43, 30);
         }
 
-        protected override List<Line> DefineBody(RectangleF area)
+        protected override List<Line> DefineBody()
         {
             List<Line> res = new List<Line>();
             res.Add(new Line(new PointF(Area.Left + 8, Area.Top + 1), new PointF(Area.Right - 8, Area.Top + 1)));

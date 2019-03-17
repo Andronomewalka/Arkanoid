@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,8 +18,10 @@ namespace arkanoid
         private Timer frame;
         private Pad pad;
         private List<Ball> balls;
+        private List<Bonus> bonuses;
         private Stats stats;
         private bool onPause;
+        private Point mousePoint;
 
         public RunController(Form1 parent, int levelNum)
         {
@@ -33,6 +36,7 @@ namespace arkanoid
             ChangeCursorState();
 
             stats = new Stats(map.PictureField);
+            bonuses = new List<Bonus>();
             frame = new Timer();
             frame.Interval = 5;
             frame.Tick += Frame_Tick;
@@ -47,20 +51,30 @@ namespace arkanoid
         {
             foreach (var item in map.Objects)
             {
-                if (item is BonusBallBlock)
+                if (item is BonusBallBlock || item is BonusBlock)
                     item.Collision += Item_Collision;
             }
         }
 
         private void Item_Collision(object sender, EventArgs e)
         {
-            BonusBallBlock cur = sender as BonusBallBlock;
-            if (cur != null && cur.Iteration == 0)
+            if (sender as BonusBallBlock != null)
             {
-                int newBallIndex = map.Objects.FindIndex((obj) => obj == cur) + 1;
-                // если отправитель события BonusBall - добалвяем шарик на место бонусного блока + 1
-                map.Objects.Insert(newBallIndex, new Ball(cur.Area) { BondedToPad = false });
-                balls.Add(map.Objects[newBallIndex] as Ball);
+                BonusBallBlock cur = sender as BonusBallBlock;
+                if (cur.Iteration == 0)
+                {
+                    // если отправитель события BonusBall - добалвяем шарик на место бонусного блока + 1
+                    int newBallIndex = map.Objects.FindIndex((obj) => obj == cur) + 1;
+                    map.Objects.Insert(newBallIndex, new Ball(cur.Area) { BondedToPad = false });
+                    balls.Add(map.Objects[newBallIndex] as Ball);
+                }
+            }
+            else if (sender as BonusBlock != null)
+            {
+                BonusBlock cur = sender as BonusBlock;
+                int newBonusIndex = map.Objects.FindIndex((obj) => obj == cur) + 1;
+                map.Objects.Insert(newBonusIndex, new Bonus(cur.Area));
+                bonuses.Add(map.Objects[newBonusIndex] as Bonus);
             }
         }
 
@@ -91,7 +105,25 @@ namespace arkanoid
         {
             if (!onPause)
             {
-                pad.SetPosition(cursor.X, pad.Area.Y);
+                // действия с платформой //
+                DefinePadPosition();
+
+                for (int i = bonuses.Count - 1; i >= 0; i--)
+                {
+                    bonuses[i].SetPosition(bonuses[i].Area.Left, bonuses[i].Area.Top + 3);
+                    if (pad.IfCollision(bonuses[i]))
+                    {
+                        if (bonuses[i].BonusType == BonusType.life)
+                            stats.Life++;
+                        else
+                            pad.DefineBonusType(bonuses[i].BonusType);
+
+                        map.Objects.Remove(bonuses[i]);
+                        bonuses.RemoveAt(i);
+                    }
+                }
+
+                // действия с шариками
 
                 for (int i = balls.Count - 1; i >= 0; i--)
                 {
@@ -99,7 +131,8 @@ namespace arkanoid
                     {
                         for (int k = map.Objects.Count - 1; k >= 0; k--)
                         {
-                            if (map.Objects[k] != balls[i] && map.Objects[k].IfCollision(balls[i]))
+                            if (map.Objects[k] != balls[i] && !(map.Objects[k] is Bonus)
+                                && map.Objects[k].IfCollision(balls[i]))
                             {
                                 Line? CollisionLine = map.Objects[k].DefineCollisionLine(balls[i]);
                                 if (CollisionLine != null)
@@ -149,17 +182,63 @@ namespace arkanoid
             }
         }
 
+        private void DefinePadPosition()
+        {
+            // float newXPadPosition = cursor.X - pad.Area.Width / 2;
+            // RectangleF distanceBetweenPads = new RectangleF();
+            //
+            // bool directionRight = false;
+            // bool directionLeft = false;
+            //
+            // // движение влево
+            // if (cursor.X - pad.Area.Width / 2 < pad.Area.X)
+            // {
+            //     distanceBetweenPads = new RectangleF(newXPadPosition, pad.RigidBody.Y, Math.Abs(pad.RigidBody.Right - newXPadPosition), pad.RigidBody.Height);
+            //     directionLeft = true;
+            // }
+            //
+            // // движение вправо
+            // else if (cursor.X - pad.Area.Width / 2 > pad.Area.X)
+            // {
+            //     distanceBetweenPads = new RectangleF(pad.RigidBody.Left, pad.RigidBody.Y, pad.RigidBody.Width + Math.Abs(pad.RigidBody.Left - newXPadPosition), pad.RigidBody.Height);
+            //     directionRight = true;
+            // }
+            // else
+            //     distanceBetweenPads = pad.RigidBody;
+            //
+            //
+            // foreach (var ball in balls)
+            // {
+            //     if (GameObject.IfCollision(ball, distanceBetweenPads))
+            //     {
+            //         if (directionLeft)
+            //         {
+            //             pad.SetPosition(ball.RigidBody.Right, pad.Area.Y);
+            //         }
+            //         else if (directionRight)
+            //         {
+            //             pad.SetPosition(ball.RigidBody.Left, pad.Area.Y);
+            //         }
+            //         ball.CollisionWith(pad, pad.DefineCollisionLine(ball));
+            //     }
+            // }
+            pad.SetPosition(cursor.X - pad.Area.Width / 2, pad.Area.Y);
+        }
+
         private void ChangeCursorState()
         {
             if (!onPause)
             {
                 Cursor.Hide();
+                // SystemParametersInfo(SPI_SETMOUSESPEED, 0, 2, 0);
+                Cursor.Position = mousePoint;
                 Task.Run(() => Cursor.Clip = new Rectangle(
                     new Point(parent.Location.X + 10, parent.Location.Y + 35),
                     new Size(parent.Size.Width - 20, parent.Size.Height - 50)));
             }
             else
             {
+                mousePoint = Cursor.Position;
                 Cursor.Show();
                 Task.Run(() => Cursor.Clip = new Rectangle());
             }
@@ -182,5 +261,14 @@ namespace arkanoid
         {
             cursor = e.Location;
         }
+
+        public const uint SPI_SETMOUSESPEED = 0x0071;
+
+        [DllImport("User32.dll")]
+        static extern bool SystemParametersInfo(
+            uint uiAction,
+            uint uiParam,
+            uint pvParam,
+            uint fWinIni);
     }
 }
