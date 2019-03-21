@@ -10,49 +10,22 @@ namespace arkanoid
 {
     class Stats
     {
+        public StatLife Life { get; set; }
+        public StatScore Score { get; set; }
+        public StatsScoreMultiplier ScoreMultiplier { get; set; }
         private PictureBox pictureField;
-        private int prevLife;
-        private int life;
         private Font font;
         private SolidBrush brush;
-        private int yUpKoef;
-        private int yDownKoef;
-        bool animationUp;
-        bool animationDown;
 
         public Stats(PictureBox pictureField)
         {
             this.pictureField = pictureField;
             pictureField.Paint += PictureField_Paint;
-            life = 3;
-            prevLife = 3;
-            font = new System.Drawing.Font("Arial", 16);
-            brush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
-        }
-
-        public int Life
-        {
-            get
-            {
-                return life;
-            }
-            set
-            {
-                prevLife = life;
-                life = value;
-                if (prevLife < life)
-                {
-                    yUpKoef = -20;
-                    yDownKoef = 0;
-                    animationDown = true;
-                }
-                else
-                {
-                    yUpKoef = 0;
-                    yDownKoef = 20;
-                    animationUp = true;
-                }
-            }
+            font = new Font("Arial", 16);
+            brush = new SolidBrush(Color.Black);
+            Life = new StatLife();
+            Score = new StatScore();
+            ScoreMultiplier = new StatsScoreMultiplier(new Size(150, 15));
         }
 
         private void PictureField_Paint(object sender, PaintEventArgs e)
@@ -62,37 +35,22 @@ namespace arkanoid
             Region prev = g.Clip;
             g.Clip = new Region(workArea);
 
-            if (animationDown || animationUp)
-                Animation(g, workArea);
+            //отображение жизни
+            if (Life.AnimationDown || Life.AnimationUp)
+                Life.Animation(g, font, brush, workArea);
             else
-                g.DrawString("Lifes: " + Life.ToString(), font, brush, workArea);
+                g.DrawString("Lifes: " + Life.Value.ToString(), font, brush, workArea);
+
+            // отображение счёта
+            workArea = new Rectangle(80, 545, 200, 25);
+            g.Clip = new Region(workArea);
+            if (Score.AnimationDown)
+                Score.Animation(g, font, brush, workArea);
+            else
+                g.DrawString("Score: " + Score.Value.ToString(), font, brush, workArea);
 
             g.Clip = prev;
-        }
-
-        private void Animation(Graphics g, Rectangle workArea)
-        {
-            if (animationDown)
-            {
-                g.DrawString("Lifes: ", font, brush, workArea);
-                g.DrawString(prevLife.ToString(), font, brush, workArea.X + 58, workArea.Y + yDownKoef);
-                g.DrawString(Life.ToString(), font, brush, workArea.X + 58, workArea.Y + yUpKoef);
-                yUpKoef++;
-                yDownKoef++;
-                if (yUpKoef == 0)
-                    animationDown = false;
-            }
-
-            else if (animationUp)
-            {
-                g.DrawString("Lifes: ", font, brush, workArea);
-                g.DrawString(prevLife.ToString(), font, brush, workArea.X + 58, workArea.Y + yUpKoef);
-                g.DrawString(Life.ToString(), font, brush, workArea.X + 58, workArea.Y + yDownKoef);
-                yUpKoef--;
-                yDownKoef--;
-                if (yDownKoef == 0)
-                    animationUp = false;
-            }
+            g.DrawImage(ScoreMultiplier.Bar.Field, 50, 570);
         }
     }
 }

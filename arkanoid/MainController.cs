@@ -104,7 +104,6 @@ namespace arkanoid
             Bitmap smallImage = new Bitmap(bitmapField, new Size(200, 148));
             Button button = new Button()
             {
-                Parent = parent,
                 Image = smallImage,
                 Size = smallImage.Size,
                 Location = DefineButtonLevelLocation(),
@@ -135,48 +134,16 @@ namespace arkanoid
 
         public void Show()
         {
-            Timer animationOpen = new Timer();
-            animationOpen.Interval = 1;
-            animationOpen.Tick += AnimationOpen_Tick;
-            animationOpen.Start();
-
-            void AnimationOpen_Tick(object sender, EventArgs e)
-            {
-                if (scenePanel.Location.X < parent.ClientRectangle.X)
-                    scenePanel.Location =
-                        new Point(scenePanel.Location.X + parent.AnimationKoef, 
-                        scenePanel.Location.Y);
-                else
-                {
-                    animationOpen.Stop();
-                    //scenePanel.Enabled = true;
-                }
-            }
+            scenePanel.Location =
+                new Point(scenePanel.Location.X + parent.ClientSize.Width,
+                scenePanel.Location.Y);
         }
 
         public void Hide()
         {
-            bool inactiveButtons = false;
-            Timer animationHide = new Timer();
-            animationHide.Interval = 1;
-            animationHide.Tick += AnimationHide_Tick;
-            animationHide.Start();
-
-            void AnimationHide_Tick(object sender, EventArgs e)
-            {
-                
-                if (!inactiveButtons)
-                {
-                   // scenePanel.Enabled = false;
-                    inactiveButtons = true;
-                }
-                if (scenePanel.Location.X > -810)
-                    scenePanel.Location = 
-                        new Point(scenePanel.Location.X - parent.AnimationKoef, 
-                        scenePanel.Location.Y);
-                else
-                    animationHide.Stop();
-            }
+            scenePanel.Location =
+                new Point(scenePanel.Location.X - parent.ClientSize.Width,
+                scenePanel.Location.Y);
         }
     }
 }

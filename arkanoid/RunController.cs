@@ -10,6 +10,7 @@ namespace arkanoid
     {
         private Form1 parent;
         private MainController mainMenu;
+        private PauseController pauseMenu;
         private Map map;
         private Point cursor;
         private Timer frame;
@@ -24,13 +25,14 @@ namespace arkanoid
         {
             this.parent = parent;
             this.mainMenu = mainMenu;
+            pauseMenu = new PauseController(parent, mainMenu, this);
         }
 
         private void CustomBlockEventSign()
         {
             foreach (var item in map.Objects)
             {
-                if (item is BonusBallBlock || item is BonusBlock)
+                if (item is Block)
                     item.Collision += Item_Collision;
             }
         }
@@ -54,6 +56,12 @@ namespace arkanoid
                 int newBonusIndex = map.Objects.FindIndex((obj) => obj == cur) + 1;
                 map.Objects.Insert(newBonusIndex, new Bonus(cur.Area));
                 bonuses.Add(map.Objects[newBonusIndex] as Bonus);
+            }
+
+            if (sender as Block != null)
+            {
+                stats.Score.Value += 10 * stats.ScoreMultiplier.Multiplier;
+                stats.ScoreMultiplier.Multiplier++;
             }
         }
 
@@ -94,7 +102,7 @@ namespace arkanoid
                     if (pad.IfCollision(bonuses[i]))
                     {
                         if (bonuses[i].BonusType == BonusType.life)
-                            stats.Life++;
+                            stats.Life.Value++;
                         else
                             pad.DefineBonusType(bonuses[i].BonusType);
 
@@ -143,7 +151,7 @@ namespace arkanoid
                                 balls[i].BondedToPad = true;
                                 balls[i].SetPosition(pad.Area.X + pad.Area.Width / 3, pad.Area.Y - 20);
                                 balls[i].Direction = new System.Numerics.Vector2(0, -1);
-                                stats.Life--;
+                                stats.Life.Value--;
                             }
                             else if (balls.Count != 0)
                             {
@@ -193,8 +201,8 @@ namespace arkanoid
                 onPause = !onPause;
                 ChangeCursorState();
                 frame.Stop();
-                Hide();
-                mainMenu.Show();
+                //Hide();
+                pauseMenu.Show();
             }
         }
 
@@ -205,7 +213,6 @@ namespace arkanoid
 
         public void Load(Level level)
         {
-
             map = new Map(parent, level);
             map.Create();
             map.PictureField.Location = new Point(parent.ClientRectangle.Right, parent.ClientRectangle.Y);
@@ -218,42 +225,23 @@ namespace arkanoid
 
         public void Show()
         {
-            parent.SuspendLayout();
-            Timer animationOpen = new Timer();
-            animationOpen.Interval = 5;
-            animationOpen.Tick += AnimationOpen_Tick;
-            animationOpen.Start();
-
             frame = new Timer();
-            frame.Interval = 1;
+            frame.Interval = 5;
             frame.Tick += Frame_Tick;
             map.PictureField.Click += Parent_Click;
             map.PictureField.MouseMove += Parent_MouseMove1;
             frame.Start();
 
-            void AnimationOpen_Tick(object sender, EventArgs e)
-            {
-                if (map.PictureField.Location.X > parent.ClientRectangle.X)
-                    map.PictureField.Location =
-                        new Point(map.PictureField.Location.X -
-                        parent.AnimationKoef, map.PictureField.Location.Y);
-                else
-                {
-                    animationOpen.Stop();
-                    parent.KeyDown += Parent_KeyDown1;
-                }
-            }
-        }
+            map.PictureField.Location =
+                new Point(map.PictureField.Location.X -
+                parent.AnimationKoef, map.PictureField.Location.Y);
 
+            parent.KeyDown += Parent_KeyDown1;
+        }
 
 
         public void Hide()
         {
-            Timer animationHide = new Timer();
-            animationHide.Interval = 1;
-            animationHide.Tick += AnimationHide_Tick;
-            animationHide.Start();
-
             stats = null;
             bonuses = null;
             frame = null;
@@ -261,17 +249,11 @@ namespace arkanoid
             pad = null;
             onPause = false;
             parent.KeyDown -= Parent_KeyDown1;
-            void AnimationHide_Tick(object sender, EventArgs e)
-            {
-                if (map.PictureField.Location.X < parent.Location.X + 810)
-                    map.PictureField.Location = 
-                        new Point(map.PictureField.Location.X + 
-                        parent.AnimationKoef, map.PictureField.Location.Y);
-                else
-                {
-                    animationHide.Stop();
-                }
-            }
+
+            map.PictureField.Location =
+                new Point(map.PictureField.Location.X +
+                parent.AnimationKoef, map.PictureField.Location.Y);
         }
     }
 }
+
