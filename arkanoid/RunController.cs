@@ -196,12 +196,18 @@ namespace arkanoid
 
         private void Parent_KeyDown1(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape)
+            if (e.KeyCode == Keys.Escape && onPause)
             {
-                onPause = !onPause;
+                onPause = false;
+                ChangeCursorState();
+                pauseMenu.Hide();
+                frame.Start();
+            }
+            else if (e.KeyCode == Keys.Escape && !onPause)
+            {
+                onPause = true;
                 ChangeCursorState();
                 frame.Stop();
-                //Hide();
                 pauseMenu.Show();
             }
         }
