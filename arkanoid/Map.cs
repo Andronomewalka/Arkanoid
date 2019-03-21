@@ -14,7 +14,7 @@ namespace arkanoid
             orangeBlock = 5, orangeBonusBallBlock = 6,
         yellowBlock = 7, yellowBonusBallBlock = 8, bonus = 9}
         private Level level; // текущий уровень
-        public PictureBox PictureField { get; private set; } // графическое представление уровня
+        public PictureBox PictureField { get; set; } // графическое представление уровня
         public List<GameObject> Objects { get; private set; } // список игровых объектов текущего уровня
 
         private int TileWidth; // размеры тайла
@@ -22,7 +22,7 @@ namespace arkanoid
 
         public static Rectangle WindowSize { get; private set; }
 
-        public Map(Form1 parent, Level level)
+        public Map(Form parent, Level level)
         {
             WindowSize = new Rectangle(
                     new Point(parent.ClientRectangle.X, parent.ClientRectangle.Y),
@@ -53,7 +53,7 @@ namespace arkanoid
                 g.DrawImage(item.Texture, item.Area);
         }
 
-        // накладываем текстуры на логическое поле(1 - блок, 2 - платформа)
+        // накладываем текстуры на логическое поле
         public void Create()
         {
             Bitmap bitmapField = new Bitmap(PictureField.Width, PictureField.Height);

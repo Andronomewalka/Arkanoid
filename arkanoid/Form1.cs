@@ -12,14 +12,22 @@ namespace arkanoid
 {
     public partial class Form1 : Form
     {
-        RunController run;
+        public int AnimationKoef { get; private set; } = 810;
         public Form1()
         {
             InitializeComponent();
             ClientSize = new Size(810, 600);
             CenterToScreen();
             DoubleBuffered = true;
-            run = new RunController(this, 1);
+            KeyPreview = true;
+            MainController main = new MainController(this);
+            FormClosing += Form1_FormClosing;
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Cursor.Show();
+            Task.Run(() => Cursor.Clip = new Rectangle());
         }
     }
 }

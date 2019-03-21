@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace arkanoid
 {
-    public enum BonusType { life }
+    public enum BonusType { life, longerPad, shorterPad }
     class Bonus : GameObject, IChangePosition
     {
         public BonusType BonusType { get; set; }
@@ -29,6 +29,10 @@ namespace arkanoid
         {
             if (BonusType == BonusType.life)
                 return Properties.Resources.life;
+            else if (BonusType == BonusType.longerPad)
+                return Properties.Resources.longerPad;
+            else if (BonusType == BonusType.shorterPad)
+                return Properties.Resources.shotterPad;
 
             return Properties.Resources.life;
         }
@@ -43,7 +47,7 @@ namespace arkanoid
 
         protected override RectangleF DefineRigidBody()
         {
-            return new RectangleF(Area.X + 6, Area.Y + 14, 33, 7);
+            return new RectangleF(Area.X + 1, Area.Y + 13, 42, 6);
         }
     }
 }

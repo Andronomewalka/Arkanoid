@@ -31,7 +31,7 @@ namespace arkanoid
 
             FieldWidth = 18;
             FieldHeight = 18;
-            // 0 - пустота, 1 - красный блок (2 - шар, 3 - платформа, добавляются автоматически)
+            // 0 - пустота, 1 - красный блок (2 - платформа, 3 - шар, добавляются автоматически)
             // 4 - красный бонус шар блок
             // 5 - оранжевый блок
             // 6 - оранжевый бонус шар блок
@@ -88,13 +88,14 @@ namespace arkanoid
                 current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 1] = 2;
                 current.LogicField[current.LogicField.GetLength(0) - 3, current.LogicField.GetLength(1) - 2] = 3;
 
-                //current.LogicField[1, 0] = 2;
-                //current.LogicField[1, 1] = 2;
-                //current.LogicField[1, 2] = 2;
+                //current.LogicField[0, 0] = 2;
+                //current.LogicField[0, 1] = 2;
+                //current.LogicField[0, 2] = 2;
                 //current.LogicField[0, 1] = 3;
-                 current.LogicField[0, 0] = 9;
-                // current.LogicField[0, 1] = 1;
-                // current.LogicField[0, 2] = 2;
+                //current.LogicField[0, 0] = 9;
+                //current.LogicField[1, 0] = 9;
+                //current.LogicField[2, 0] = 9;
+                //current.LogicField[3, 0] = 9;
             }
             catch (Exception e)
             {

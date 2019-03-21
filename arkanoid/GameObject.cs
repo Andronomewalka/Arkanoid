@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,7 +67,7 @@ namespace arkanoid
                     {
                         System.Windows.Point cur = new System.Windows.Point (k, i);
                         double distance = Math.Abs((intBallCenter - cur).LengthSquared);
-                        if (distance < minDistance)
+                        if (distance < minDistance && !ParallelDirection(line))
                         {
                             minDistance = distance;
                             minDistaneLine = line;
@@ -77,6 +78,15 @@ namespace arkanoid
             if (minDistaneLine != null)
                 Collision?.Invoke(this, EventArgs.Empty);
             return minDistaneLine;
+
+            bool ParallelDirection(Line line)
+            {
+                Vector2 normVector = new Vector2(line.A.Y - line.B.Y, line.B.X - line.A.X);
+               // if (normVector * ball.Direction == 0)
+               //     return true;
+
+                return false;
+            }
         }
 
         protected virtual Bitmap DefineLineTexture()
