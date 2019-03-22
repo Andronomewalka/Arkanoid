@@ -66,6 +66,7 @@
     <Compile Include="GameObject.cs" />
     <Compile Include="IChangePosition.cs" />
     <Compile Include="IController.cs" />
+    <Compile Include="Leaderboard.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="Log.cs" />
@@ -151,6 +152,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\yellowBlock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\background_0.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

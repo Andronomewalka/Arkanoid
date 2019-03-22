@@ -12,10 +12,12 @@ namespace arkanoid
     [Serializable]
     public class Level
     {
-        public int[,] LogicField { get; set; } // логическое поле игры (загружаем из файла уровня)
+        public int[,] LogicField { get; private 
+                set; } // логическое поле игры (загружаем из файла уровня)
         public Image Background { get; private set; } // задник
         public int FieldWidth { get; private set; } // размеры логического поля
         public int FieldHeight { get; private set; }
+        public Leaderboard Leaderboard { get; private set; }
 
         private static string path;
 
@@ -59,7 +61,7 @@ namespace arkanoid
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
             };
-            Background = Properties.Resources.background;
+            Background = Properties.Resources.background_0;
             Serialization(levelNum);
         }
 
@@ -77,30 +79,24 @@ namespace arkanoid
         {
             Level current = null;
             BinaryFormatter formatter = new BinaryFormatter();
-            try
+            using (FileStream fs = new FileStream(path + "\\" + levelNum.ToString() + ".dat", FileMode.OpenOrCreate))
             {
-                using (FileStream fs = new FileStream(path + "\\" + levelNum.ToString() + ".dat", FileMode.OpenOrCreate))
-                {
-                    current = formatter.Deserialize(fs) as Level;
-                }
-                current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 3] = 2;
-                current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 2] = 2;
-                current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 1] = 2;
-                current.LogicField[current.LogicField.GetLength(0) - 3, current.LogicField.GetLength(1) - 2] = 3;
-
-                //current.LogicField[0, 0] = 2;
-                //current.LogicField[0, 1] = 2;
-                //current.LogicField[0, 2] = 2;
-                //current.LogicField[0, 1] = 3;
-                //current.LogicField[0, 0] = 9;
-                //current.LogicField[1, 0] = 9;
-                //current.LogicField[2, 0] = 9;
-                //current.LogicField[3, 0] = 9;
+                current = formatter.Deserialize(fs) as Level;
             }
-            catch (Exception e)
-            {
+            current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 3] = 2;
+            current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 2] = 2;
+            current.LogicField[current.LogicField.GetLength(0) - 2, current.LogicField.GetLength(1) - 1] = 2;
+            current.LogicField[current.LogicField.GetLength(0) - 3, current.LogicField.GetLength(1) - 2] = 3;
 
-            }
+            //current.LogicField[0, 0] = 2;
+            //current.LogicField[0, 1] = 2;
+            //current.LogicField[0, 2] = 2;
+            //current.LogicField[0, 1] = 3;
+            //current.LogicField[0, 0] = 9;
+            //current.LogicField[1, 0] = 9;
+            //current.LogicField[2, 0] = 9;
+            //current.LogicField[3, 0] = 9;
+
             return current;
         }
     }

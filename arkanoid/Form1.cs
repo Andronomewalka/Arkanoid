@@ -20,7 +20,8 @@ namespace arkanoid
             CenterToScreen();
             DoubleBuffered = true;
             KeyPreview = true;
-            MainController main = new MainController(this);
+          //  new Level(0);
+           MainController main = new MainController(this);
             FormClosing += Form1_FormClosing;
         }
 
