@@ -24,18 +24,20 @@ namespace arkanoid
 
             scenePanel = new Panel()
             {
-                Location = new Point(parent.ClientSize.Width, parent.ClientSize.Height),
                 Size = new Size(200, 300),
                 BackgroundImage = Properties.Resources.background,
                 Parent = parent
             };
+            scenePanel.Location = new Point(parent.ClientSize.Width / 2 - scenePanel.Width / 2,
+                        parent.ClientSize.Height / 2 - scenePanel.Height / 2);
 
             toMain = new Button()
             {
-                Text = "Main menu",
+                Text = "Main menu"
             };
 
             scenePanel.Controls.Add(toMain);
+            scenePanel.Hide();
             toMain.Location = new Point(toMain.Parent.Size.Width / 2 - toMain.Width / 2, 5);
             toMain.Click += ToMain_Click;
         }
@@ -49,15 +51,17 @@ namespace arkanoid
 
         public void Hide()
         {
-            scenePanel.Location =
-                new Point(parent.ClientSize.Width, parent.ClientSize.Height);
+            scenePanel.Hide();
+            //scenePanel.Location =
+            //    new Point(parent.ClientSize.Width, parent.ClientSize.Height);
         }
 
         public void Show()
         {
-            scenePanel.Location =
-                new Point(parent.ClientSize.Width / 2 - scenePanel.Width / 2,
-                parent.ClientSize.Height / 2 - scenePanel.Height / 2);
+            scenePanel.Show();
+            //scenePanel.Location =
+            //    new Point(parent.ClientSize.Width / 2 - scenePanel.Width / 2,
+            //    parent.ClientSize.Height / 2 - scenePanel.Height / 2);
             //toMain.Location = new Point(parent.ClientSize.Width / 2 - scenePanel.Width / 2,
             //    parent.ClientSize.Height / 2 - scenePanel.Height / 2);
             //toMain.BringToFront();

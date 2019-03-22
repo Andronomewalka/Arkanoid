@@ -38,13 +38,13 @@ namespace arkanoid
         private void MultiplierIncrementOperation()
         {
             Bar.Text = multiplier.ToString();
-            t.Interval = 60 - multiplier * 10;
+            t.Interval = 61 - multiplier * 10;
         }
 
         public StatsScoreMultiplier(Size workArea)
         {
             minMultiplier = 1;
-            maxMultiplier = 5;
+            maxMultiplier = 6;
             multiplier = minMultiplier;
 
             Bar = new CustomStatusBar(workArea) { Text = multiplier.ToString() };
@@ -72,6 +72,16 @@ namespace arkanoid
             t.Stop();
             Bar.Reset();
             Bar.UpdateBar();
+        }
+
+        public void Stop()
+        {
+            t.Stop();
+        }
+
+        public void Start()
+        {
+            t.Start();
         }
     }
 

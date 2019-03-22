@@ -202,12 +202,14 @@ namespace arkanoid
                 ChangeCursorState();
                 pauseMenu.Hide();
                 frame.Start();
+                stats.ScoreMultiplier.Start();
             }
             else if (e.KeyCode == Keys.Escape && !onPause)
             {
                 onPause = true;
                 ChangeCursorState();
                 frame.Stop();
+                stats.ScoreMultiplier.Stop();
                 pauseMenu.Show();
             }
         }
@@ -221,7 +223,8 @@ namespace arkanoid
         {
             map = new Map(parent, level);
             map.Create();
-            map.PictureField.Location = new Point(parent.ClientRectangle.Right, parent.ClientRectangle.Y);
+            map.PictureField.Location = new Point(0,0/*parent.ClientRectangle.Right, parent.ClientRectangle.Y*/);
+            map.PictureField.Hide();
             stats = new Stats(map.PictureField);
             bonuses = new List<Bonus>();
             FindBallAndPad();
@@ -238,10 +241,11 @@ namespace arkanoid
             map.PictureField.MouseMove += Parent_MouseMove1;
             frame.Start();
 
-            map.PictureField.Location =
-                new Point(map.PictureField.Location.X -
-                parent.AnimationKoef, map.PictureField.Location.Y);
-
+            map.PictureField.Show();
+           // map.PictureField.Location =
+           //     new Point(map.PictureField.Location.X -
+           //     parent.AnimationKoef, map.PictureField.Location.Y);
+           //
             parent.KeyDown += Parent_KeyDown1;
         }
 
@@ -256,9 +260,10 @@ namespace arkanoid
             onPause = false;
             parent.KeyDown -= Parent_KeyDown1;
 
-            map.PictureField.Location =
-                new Point(map.PictureField.Location.X +
-                parent.AnimationKoef, map.PictureField.Location.Y);
+            map.PictureField.Hide();
+           // map.PictureField.Location =
+           //     new Point(map.PictureField.Location.X +
+           //     parent.AnimationKoef, map.PictureField.Location.Y);
         }
     }
 }

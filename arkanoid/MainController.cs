@@ -134,16 +134,18 @@ namespace arkanoid
 
         public void Show()
         {
-            scenePanel.Location =
-                new Point(scenePanel.Location.X + parent.ClientSize.Width,
-                scenePanel.Location.Y);
+            scenePanel.Show();
+          //  scenePanel.Location =
+          //     new Point(scenePanel.Location.X + parent.ClientSize.Width,
+          //     scenePanel.Location.Y);
         }
 
         public void Hide()
         {
-            scenePanel.Location =
-                new Point(scenePanel.Location.X - parent.ClientSize.Width,
-                scenePanel.Location.Y);
+            scenePanel.Hide();
+            //scenePanel.Location =
+            //    new Point(scenePanel.Location.X - parent.ClientSize.Width,
+            //    scenePanel.Location.Y);
         }
     }
 }

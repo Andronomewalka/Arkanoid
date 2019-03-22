@@ -10,7 +10,7 @@ namespace arkanoid
         enum CollisionSide { vertical, horizontal }
         protected float speed; // скорость
         List<GameObject> recentCollisionObjects; // иногда при столкновениях объекты залипают друг с другом, из-за того что не успевая покинуть область коллизии, меняют направление
-        public System.Numerics.Vector2 Direction { get; set; }
+        public Vector2 Direction { get; set; }
         public bool BondedToPad { get; set; } = true;
         public PointF Center { get; private set; }
 
@@ -22,7 +22,7 @@ namespace arkanoid
             Body = DefineBody();
             RigidBody = DefineRigidBody();
             Center = DefineCenter();
-            Direction = new System.Numerics.Vector2(0f, -1f);
+            Direction = new Vector2(0f, -1f);
             speed = 5f;
             recentCollisionObjects = new List<GameObject>();
             LineTexture = DefineLineTexture();
@@ -109,20 +109,17 @@ namespace arkanoid
             {
                 if (!recentCollisionObjects[i].IfCollision(this))
                     recentCollisionObjects.RemoveAt(i);
+
             }
         }
 
         public void SetPosition(float posX, float posY)
         {
-            // if (RigidBody.Left > Map.WindowSize.Left &&
-            //     RigidBody.Right < Map.WindowSize.Right)
-            // {
             Area = new RectangleF(posX, posY, Area.Width, Area.Height);
             Body = DefineBody();
             RigidBody = DefineRigidBody();
             Center = DefineCenter();
             LineTexture = DefineLineTexture();
-            //  }
         }
 
         public bool CollisionWith(GameObject obj, Line? line)
@@ -137,16 +134,13 @@ namespace arkanoid
                 if (obj is Pad)
                 {
                     reflectVector = (obj as Pad).DefineReflectVector(line);
-                    //reflectVector = System.Numerics.Vector2.Normalize(reflectVector);
                     newDirection = Vector2.Reflect(Direction, reflectVector);
 
                     if (newDirection.Y > 0 || Math.Abs(newDirection.X) < 0.1)
-                        //Direction = new Vector2(Direction.X > 0 ? Direction.X + 0.5f : Direction.X - 0.5f, Direction.Y * -1 - 0.5f);
                         Direction = new Vector2(Direction.X, Direction.Y * -1);
 
                     else
                         Direction = newDirection;
-                    //newDirection = Direction - 2 * (Direction * reflectVector) * reflectVector;
                 }
 
                 else
@@ -154,28 +148,20 @@ namespace arkanoid
                     reflectVector = new Vector2(line.Value.A.Y - line.Value.B.Y, line.Value.B.X - line.Value.A.X);
                     reflectVector = Vector2.Normalize(reflectVector);
                     Direction = Vector2.Reflect(Direction, reflectVector);
-                    // reflectVector.Normalize();
-                    // newDirection = Direction - 2 * (Direction * reflectVector) * reflectVector;
                 }
-
-                // if (reflectVector * Direction == 0)
-                //     res = false;
-
-
 
                 //if (obj is Pad)
                 //    Log.Write(line, reflectVector, Direction, newDirection);
 
-                string directXText = Direction.X.ToString("N5");
-                string directYText = Direction.Y.ToString("N5");
-                string newDirectXText = newDirection.X.ToString("N5");
-                string newDirectYText = newDirection.Y.ToString("N5");
-                if (directXText.Equals(newDirectXText) &&
-                    directYText.Equals(newDirectYText))
-                {
-                    res = false;
-                }
-                // Direction = newDirection;
+                //string directXText = Direction.X.ToString("N5");
+                //string directYText = Direction.Y.ToString("N5");
+                //string newDirectXText = newDirection.X.ToString("N5");
+                //string newDirectYText = newDirection.Y.ToString("N5");
+                //if (directXText.Equals(newDirectXText) &&
+                //    directYText.Equals(newDirectYText))
+                //{
+                //    res = false;
+                //}
 
                 // добавялем в список коллизий те объекты, которые не разрушаются при столкновении
                 if (obj is Ball || obj is Pad ||
