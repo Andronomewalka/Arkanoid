@@ -20,6 +20,8 @@ namespace arkanoid
             CenterToScreen();
             DoubleBuffered = true;
             KeyPreview = true;
+           // Leaderboard s = new Leaderboard();
+           // s.ReadForLevel(1);
           //  new Level(0);
            MainController main = new MainController(this);
             FormClosing += Form1_FormClosing;

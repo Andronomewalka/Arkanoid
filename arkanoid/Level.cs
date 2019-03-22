@@ -12,12 +12,10 @@ namespace arkanoid
     [Serializable]
     public class Level
     {
-        public int[,] LogicField { get; private 
-                set; } // логическое поле игры (загружаем из файла уровня)
+        public int[,] LogicField { get; private set; } // логическое поле игры (загружаем из файла уровня)
         public Image Background { get; private set; } // задник
         public int FieldWidth { get; private set; } // размеры логического поля
         public int FieldHeight { get; private set; }
-        public Leaderboard Leaderboard { get; private set; }
 
         private static string path;
 

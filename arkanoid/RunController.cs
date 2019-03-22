@@ -159,7 +159,7 @@ namespace arkanoid
                                 balls.RemoveAt(i);
                             }
                             else
-                                return;
+                               LoseCondition();
                         }
                         else
                             balls[i].Move();
@@ -168,7 +168,18 @@ namespace arkanoid
                         balls[i].SetPosition(pad.Area.X + pad.Area.Width / 3, pad.Area.Y - 20);
                 }
                 map.PictureField.Invalidate();
+                CheckForWin();
             }
+        }
+
+        private void CheckForWin()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void LoseCondition()
+        {
+            
         }
 
         private void DefinePadPosition()
@@ -211,6 +222,7 @@ namespace arkanoid
                 frame.Stop();
                 stats.ScoreMultiplier.Stop();
                 pauseMenu.Show();
+
             }
         }
 

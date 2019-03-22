@@ -15,12 +15,12 @@ namespace arkanoid
         private Panel scenePanel;
         private Form1 parent;
         private Button toMain;
+        private Label headline;
 
-        public PauseController(Form1 parent, MainController mainMenu, RunController runMenu)
+        public PauseController(Form1 parent, MainController mainMenu, string headlineText)
         {
             this.parent = parent;
             this.mainMenu = mainMenu;
-            this.runMenu = runMenu;
 
             scenePanel = new Panel()
             {
@@ -31,14 +31,21 @@ namespace arkanoid
             scenePanel.Location = new Point(parent.ClientSize.Width / 2 - scenePanel.Width / 2,
                         parent.ClientSize.Height / 2 - scenePanel.Height / 2);
 
+            headline = new Label()
+            {
+                Text = headlineText
+            };
+
+
             toMain = new Button()
             {
                 Text = "Main menu"
             };
 
             scenePanel.Controls.Add(toMain);
+            scenePanel.Controls.Add(headline);
             scenePanel.Hide();
-            toMain.Location = new Point(toMain.Parent.Size.Width / 2 - toMain.Width / 2, 5);
+            toMain.Location = new Point(toMain.Parent.Size.Width / 2 - toMain.Width / 2, 10);
             toMain.Click += ToMain_Click;
         }
 
