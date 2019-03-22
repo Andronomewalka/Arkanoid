@@ -66,7 +66,7 @@
     <Compile Include="GameObject.cs" />
     <Compile Include="IChangePosition.cs" />
     <Compile Include="IController.cs" />
-    <Compile Include="Leaderboard.cs" />
+    <Compile Include="LeaderboardController.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="Log.cs" />
@@ -87,6 +87,9 @@
     <Compile Include="Stats.cs" />
     <Compile Include="StatScore.cs" />
     <Compile Include="StatsScoreMultiplier.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -154,7 +157,28 @@
     <None Include="Resources\yellowBlock.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\background_0.jpg" />
+    <None Include="Resources\background_1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\background_menu.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\level_1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\level_2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\level_3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\level_4.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\level_5.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\level_6.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -20,18 +20,21 @@ namespace arkanoid
         public MainController(Form1 parent)
         {
             this.parent = parent;
+
             scenePanel = new Panel()
             {
                 Location = parent.ClientRectangle.Location,
                 Size = parent.ClientRectangle.Size,
-                BackgroundImage = Properties.Resources.background,
+                BackgroundImage = Properties.Resources.background_menu,
                 Parent = parent
             };
 
             run = new RunController(parent, this);
             GetLevels();
             LevelSelectorScreen();
+
         }
+
 
         private void GetLevels()
         {
@@ -53,6 +56,7 @@ namespace arkanoid
                 scenePanel.Controls.Add(levelButtons.Last());
             }
         }
+
 
         private Button CreateLevelButton(Level level, int levelNum)
         {
@@ -105,9 +109,9 @@ namespace arkanoid
             Button button = new Button()
             {
                 Image = smallImage,
-                Size = smallImage.Size,
+                Size = new Size(smallImage.Width, smallImage.Height + 8),
                 Location = DefineButtonLevelLocation(),
-                Name = levelNum.ToString()
+                Name = levelNum.ToString(),
             };
             button.Click += levelButtons_Click;
             return button;
@@ -128,16 +132,25 @@ namespace arkanoid
         {
             Button cur = sender as Button;
             Hide();
-            run.Load(levels[Convert.ToUInt32(cur.Name)]);
+            run.LoadNew(levels[Convert.ToUInt32(cur.Name)]);
+            run.Show();
+        }
+
+        internal void NextRun()
+        {
+            if (run.Level + 1 < levels.Length)
+                run.LoadCont(levels[run.Level + 1]);
+            else
+                run.LoadCont(levels[0]);
             run.Show();
         }
 
         public void Show()
         {
             scenePanel.Show();
-          //  scenePanel.Location =
-          //     new Point(scenePanel.Location.X + parent.ClientSize.Width,
-          //     scenePanel.Location.Y);
+            //  scenePanel.Location =
+            //     new Point(scenePanel.Location.X + parent.ClientSize.Width,
+            //     scenePanel.Location.Y);
         }
 
         public void Hide()

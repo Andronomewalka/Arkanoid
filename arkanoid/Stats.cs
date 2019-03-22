@@ -28,6 +28,11 @@ namespace arkanoid
             ScoreMultiplier = new StatsScoreMultiplier(new Size(150, 15));
         }
 
+        public Stats(PictureBox pictureField, StatLife lifes) : this(pictureField)
+        {
+            Life = lifes;
+        }
+
         private void PictureField_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;

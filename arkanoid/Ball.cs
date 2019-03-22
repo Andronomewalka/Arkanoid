@@ -185,6 +185,16 @@ namespace arkanoid
                 Direction = new Vector2(Direction.X * -1, Direction.Y);
                 SetPosition(newPos.Left, newPos.Top);
             }
+
+            if (Direction.X == 0 && Area.X < Map.WindowSize.Left)
+                Direction = new Vector2(1, Direction.Y);
+            else if (Direction.X == 0 && Area.Right > Map.WindowSize.Right)
+                Direction = new Vector2(-1, Direction.Y);
+            if (Direction.Y == 0 && Area.Top < Map.WindowSize.Top)
+                Direction = new Vector2(Direction.X, 1);
+            else if (Direction.Y == 0 && Area.Bottom > Map.WindowSize.Bottom)
+                Direction = new Vector2(Direction.X, -1);
+            Direction = Vector2.Normalize(Direction);
         }
     }
 }

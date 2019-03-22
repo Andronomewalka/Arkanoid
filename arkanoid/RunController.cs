@@ -11,6 +11,7 @@ namespace arkanoid
         private Form1 parent;
         private MainController mainMenu;
         private PauseController pauseMenu;
+        private LeaderboardController leaderboardMenu;
         private Map map;
         private Point cursor;
         private Timer frame;
@@ -20,12 +21,14 @@ namespace arkanoid
         private Stats stats;
         private bool onPause;
         private Point mousePoint;
+        public int Level { get; private set; }
 
         public RunController(Form1 parent, MainController mainMenu)
         {
             this.parent = parent;
             this.mainMenu = mainMenu;
             pauseMenu = new PauseController(parent, mainMenu, this);
+            leaderboardMenu = new LeaderboardController(parent, mainMenu, this);
         }
 
         private void CustomBlockEventSign()
@@ -53,7 +56,7 @@ namespace arkanoid
             else if (sender as BonusBlock != null)
             {
                 BonusBlock cur = sender as BonusBlock;
-                int newBonusIndex = map.Objects.FindIndex((obj) => obj == cur) + 1;
+                int newBonusIndex = map.Objects.Count - 2;
                 map.Objects.Insert(newBonusIndex, new Bonus(cur.Area));
                 bonuses.Add(map.Objects[newBonusIndex] as Bonus);
             }
@@ -148,6 +151,9 @@ namespace arkanoid
                         {
                             if (balls.Count == 1)
                             {
+                                if (stats.Life.Value == 0)
+                                    LoseCondition();
+
                                 balls[i].BondedToPad = true;
                                 balls[i].SetPosition(pad.Area.X + pad.Area.Width / 3, pad.Area.Y - 20);
                                 balls[i].Direction = new System.Numerics.Vector2(0, -1);
@@ -158,8 +164,6 @@ namespace arkanoid
                                 map.Objects.Remove(balls[i]);
                                 balls.RemoveAt(i);
                             }
-                            else
-                               LoseCondition();
                         }
                         else
                             balls[i].Move();
@@ -174,12 +178,29 @@ namespace arkanoid
 
         private void CheckForWin()
         {
-            throw new NotImplementedException();
+            foreach (var item in map.Objects)
+            {
+                if (item is Block)
+                    return;
+            }
+
+            onPause = true;
+            ChangeCursorState();
+            frame.Stop();
+            stats.ScoreMultiplier.Stop();
+            leaderboardMenu.Score = stats.Score.Value;
+            leaderboardMenu.Level = map.Level;
+            leaderboardMenu.Show();
         }
 
         private void LoseCondition()
         {
-            
+            onPause = true;
+            ChangeCursorState();
+            frame.Stop();
+            stats.ScoreMultiplier.Stop();
+            pauseMenu.HeadlineText = "GAME OVER";
+            pauseMenu.Show();
         }
 
         private void DefinePadPosition()
@@ -221,8 +242,8 @@ namespace arkanoid
                 ChangeCursorState();
                 frame.Stop();
                 stats.ScoreMultiplier.Stop();
+                pauseMenu.HeadlineText = "PAUSE";
                 pauseMenu.Show();
-
             }
         }
 
@@ -231,11 +252,12 @@ namespace arkanoid
             cursor = e.Location;
         }
 
-        public void Load(Level level)
+        public void LoadNew(Level level)
         {
+            Level = level.Num;
             map = new Map(parent, level);
             map.Create();
-            map.PictureField.Location = new Point(0,0/*parent.ClientRectangle.Right, parent.ClientRectangle.Y*/);
+            map.PictureField.Location = new Point(0, 0);
             map.PictureField.Hide();
             stats = new Stats(map.PictureField);
             bonuses = new List<Bonus>();
@@ -244,6 +266,25 @@ namespace arkanoid
             ChangeCursorState();
         }
 
+        public void LoadCont(Level level)
+        {
+            map.PictureField.Hide();
+            Level = level.Num;
+            map = new Map(parent, level);
+            map.Create();
+            map.PictureField.Location = new Point(0, 0);
+            onPause = false;
+
+            if (stats.Life.Value < 0)
+                stats = new Stats(map.PictureField);
+            else
+                stats = new Stats(map.PictureField, stats.Life);
+
+            FindBallAndPad();
+            CustomBlockEventSign();
+            ChangeCursorState();
+            parent.KeyDown -= Parent_KeyDown1;
+        }
         public void Show()
         {
             frame = new Timer();
@@ -254,10 +295,6 @@ namespace arkanoid
             frame.Start();
 
             map.PictureField.Show();
-           // map.PictureField.Location =
-           //     new Point(map.PictureField.Location.X -
-           //     parent.AnimationKoef, map.PictureField.Location.Y);
-           //
             parent.KeyDown += Parent_KeyDown1;
         }
 
@@ -273,9 +310,6 @@ namespace arkanoid
             parent.KeyDown -= Parent_KeyDown1;
 
             map.PictureField.Hide();
-           // map.PictureField.Location =
-           //     new Point(map.PictureField.Location.X +
-           //     parent.AnimationKoef, map.PictureField.Location.Y);
         }
     }
 }

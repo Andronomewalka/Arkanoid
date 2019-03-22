@@ -16,7 +16,8 @@ namespace arkanoid
         public Image Background { get; private set; } // задник
         public int FieldWidth { get; private set; } // размеры логического поля
         public int FieldHeight { get; private set; }
-
+        public int Num { get; private set; }
+        public Leaderboard Leaderboard { get; set; }
         private static string path;
 
         static Level()
@@ -42,7 +43,7 @@ namespace arkanoid
             {
                 { 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0 },
                 { 0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0 },
-                { 0,1,1,1,0,0,5,5,5,5,5,5,0,0,1,1,1,0 },
+                { 0,1,1,9,0,0,5,5,5,5,5,5,0,0,9,1,1,0 },
                 { 0,1,1,0,0,0,5,0,0,0,0,5,0,0,0,1,1,0 },
                 { 0,1,1,0,0,0,5,0,6,6,0,5,0,0,0,1,1,0 },
                 { 0,1,1,0,0,0,5,0,6,6,0,5,0,0,0,1,1,0 },
@@ -59,7 +60,9 @@ namespace arkanoid
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
             };
-            Background = Properties.Resources.background_0;
+            Background = Properties.Resources.level_2;
+            Num = levelNum;
+            Leaderboard = new Leaderboard("empty", 0);
             Serialization(levelNum);
         }
 
@@ -68,6 +71,16 @@ namespace arkanoid
             BinaryFormatter formatter = new BinaryFormatter();
 
             using (FileStream fs = new FileStream(path + "\\" + levelNum.ToString() + ".dat", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, this);
+            }
+        }
+
+        public void Serialization()
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            using (FileStream fs = new FileStream(path + "\\" + Num.ToString() + ".dat", FileMode.Truncate))
             {
                 formatter.Serialize(fs, this);
             }
@@ -98,4 +111,23 @@ namespace arkanoid
             return current;
         }
     }
+
+    [Serializable]
+    public class Leaderboard
+    {
+        public string[] Name { get; set; }
+        public int[] Value { get; set; }
+
+        public Leaderboard(string name, int value)
+        {
+            Name = new string[3];
+            Value = new int[3];
+            for (int i = 0; i < 3; i++)
+            {
+                Name[i] = name;
+                Value[i] = value;
+            }
+        }
+    }
+
 }
