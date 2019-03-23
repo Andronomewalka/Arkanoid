@@ -117,10 +117,10 @@ namespace arkanoid
         private void UpdateLabel(Label label, Level level, ToolTip toolTip)
         {
             label.Text = DefineHighScoreLevel(level);
-            string allHighScoresLabel = "Name     Score\n";
+            string allHighScoresLabel = "Name\t\tScore\n";
             for (int i = 0; i < level.Leaderboard.Name.Length; i++)
                 allHighScoresLabel += level.Leaderboard.Name[i] +
-                    "  " + level.Leaderboard.Value[i].ToString() + "\n";
+                    "\t\t" + level.Leaderboard.Value[i].ToString() + "\n";
 
             toolTip.SetToolTip(label, allHighScoresLabel);
         }

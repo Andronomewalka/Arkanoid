@@ -40,22 +40,6 @@ namespace arkanoid
             parent.ClientSize.Height / 2 - scenePanel.Height / 2);
 
             scenePanel.Hide();
-
-            cont = new Label()
-            {
-                Text = "Continue",
-                Size = new Size(scenePanel.Width, 50),
-                BackColor = Color.Transparent,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Font = font
-            };
-            cont.MouseEnter += Label_MouseEnter;
-            cont.MouseLeave += Label_MouseLeave;
-
-            scenePanel.Controls.Add(cont);
-            cont.Location = new Point(cont.Parent.Size.Width / 2 - cont.Width / 2, cont.Parent.Size.Height - cont.Height);
-            cont.Click += Cont_Click;
-
         }
 
         private void Label_MouseLeave(object sender, EventArgs e)
@@ -83,7 +67,7 @@ namespace arkanoid
         {
             leadersList = new ListView()
             {
-                Size = new Size(scenePanel.Width-20, 100),
+                Size = new Size(scenePanel.Width - 20, 100),
                 View = View.Details,
                 LabelEdit = false,
                 AllowColumnReorder = false,
@@ -152,73 +136,101 @@ namespace arkanoid
 
         public void Show()
         {
-            headline = new Label()
-            {
-                Size = new Size(scenePanel.Width, 50),
-                Text = "New High Score: " + score.ToString(),
-                BackColor = Color.Transparent,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Font = font
-            };
-            scenePanel.Controls.Add(headline);
+                scenePanel.Controls.Clear();
 
-            SetListViewItems();
-            leadersList.Location = new Point(10, headline.Height);
-            scenePanel.Controls.Add(leadersList);
-
-
-
-            if (CheckNewHighScore())
-            {
-                TextBox textBox = new TextBox()
+                cont = new Label()
                 {
-                    Size = new Size(scenePanel.Width-12, 50),
+                    Text = "Continue",
+                    Size = new Size(scenePanel.Width, 50),
+                    BackColor = Color.Transparent,
+                    TextAlign = ContentAlignment.MiddleCenter,
                     Font = font
                 };
-                Label submit = new Label()
+                cont.MouseEnter += Label_MouseEnter;
+                cont.MouseLeave += Label_MouseLeave;
+
+                scenePanel.Controls.Add(cont);
+                cont.Location = new Point(cont.Parent.Size.Width / 2 - cont.Width / 2, cont.Parent.Size.Height - cont.Height);
+                cont.Click += Cont_Click;
+
+                headline = new Label()
                 {
-                    Size = new Size(scenePanel.Width / 2, 50),
-                    Text = "Submit",
+                    Size = new Size(scenePanel.Width, 50),
+                    Text = "New High Score: " + score.ToString(),
                     BackColor = Color.Transparent,
-                    Font = font,
-                    TextAlign = ContentAlignment.MiddleCenter
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Font = font
                 };
-                bool submitClicked = false;
-                submit.Click += Submit_Click;
-                submit.MouseEnter += Label_MouseEnter;
-                submit.MouseLeave += Label_MouseLeave;
+                scenePanel.Controls.Add(headline);
 
-                scenePanel.Controls.Add(textBox);
-                scenePanel.Controls.Add(submit);
-                textBox.Location = new Point(6, leadersList.Location.Y + leadersList.Height + 5);
-                submit.Location = new Point(scenePanel.Width / 4, textBox.Location.Y + textBox.Height + 5);
+            if (Level.Leaderboard.Name[0] != "random")
+            {
+                SetListViewItems();
+                leadersList.Location = new Point(10, headline.Height);
+                scenePanel.Controls.Add(leadersList);
 
-                void Submit_Click(object sender, EventArgs e)
+
+                if (CheckNewHighScore())
                 {
-                    if (!submitClicked)
+                    TextBox textBox = new TextBox()
                     {
-                        for (int i = 0; i < Level.Leaderboard.Name.Length; i++)
+                        Size = new Size(scenePanel.Width - 12, 50),
+                        Font = font,
+                        MaxLength = 8
+                    };
+                    Label submit = new Label()
+                    {
+                        Size = new Size(scenePanel.Width / 2, 50),
+                        Text = "Submit",
+                        BackColor = Color.Transparent,
+                        Font = font,
+                        TextAlign = ContentAlignment.MiddleCenter
+                    };
+                    bool submitClicked = false;
+                    submit.Click += Submit_Click;
+                    submit.MouseEnter += Label_MouseEnter;
+                    submit.MouseLeave += Label_MouseLeave;
+
+                    scenePanel.Controls.Add(textBox);
+                    scenePanel.Controls.Add(submit);
+                    textBox.Location = new Point(6, leadersList.Location.Y + leadersList.Height + 5);
+                    submit.Location = new Point(scenePanel.Width / 4, textBox.Location.Y + textBox.Height + 5);
+
+                    void Submit_Click(object sender, EventArgs e)
+                    {
+                        if (!submitClicked)
                         {
-                            if (score > Level.Leaderboard.Value[i])
-                            {
-                                Level.Leaderboard.Name[i] = textBox.Text;
-                                Level.Leaderboard.Value[i] = score;
-                                break;
-                            }
+                            DefineScorePosition(score, textBox.Text, 0);
+                            textBox.Enabled = false;
+                            submit.Enabled = false;
+                            submitClicked = true;
+                            scenePanel.Controls.Remove(leadersList);
+                            SetListViewItems();
+                            leadersList.Location = new Point(10, headline.Height);
+                            scenePanel.Controls.Add(leadersList);
+                            Level.Serialization();
                         }
-                        submitClicked = true;
-                        scenePanel.Controls.Remove(leadersList);
-                        SetListViewItems();
-                        leadersList.Location = new Point(10, headline.Height);
-                        scenePanel.Controls.Add(leadersList);
-                        Level.Serialization();
                     }
                 }
+                else
+                    headline.Text = "Score: " + score.ToString();
             }
-            else
-                headline.Text = "Score: " + score.ToString();
-
             scenePanel.Show();
+        }
+
+        private void DefineScorePosition(int score, string name, int i)
+        {
+            if (i < 3)
+            {
+                if (score > Level.Leaderboard.Value[i])
+                {
+                    DefineScorePosition(Level.Leaderboard.Value[i], Level.Leaderboard.Name[i], i + 1);
+                    Level.Leaderboard.Name[i] = name;
+                    Level.Leaderboard.Value[i] = score;
+                }
+                else
+                    DefineScorePosition(score, name, i + 1);
+            }
         }
     }
 }

@@ -182,7 +182,7 @@ namespace arkanoid
             }
             else if (winAction)
             {
-                if(stats.Life.Value > 0)
+                if (stats.Life.Value > 0)
                 {
                     stats.Life.Value--;
                     stats.Score.Value += 1000;
@@ -310,10 +310,10 @@ namespace arkanoid
             onPause = false;
             winAction = false;
 
-            if (stats.Life.Value < 0)
-                stats = new Stats(map.PictureField);
-            else
-                stats = new Stats(map.PictureField, stats.Life);
+            // if (stats.Life.Value < 0)
+            stats = new Stats(map.PictureField);
+            // else
+            //     stats = new Stats(map.PictureField, stats.Life);
 
             FindBallAndPad();
             CustomBlockEventSign();
@@ -330,6 +330,7 @@ namespace arkanoid
             frame.Start();
 
             map.PictureField.Show();
+            map.PictureField.Focus();
             parent.KeyDown += Parent_KeyDown1;
         }
 

@@ -15,6 +15,7 @@ namespace arkanoid
             DoubleBuffered = true;
             KeyPreview = true;
             FormBorderStyle = FormBorderStyle.FixedDialog;
+          //  new Level(5);
             MainController main = new MainController(this);
             FormClosing += Form1_FormClosing;
         }
