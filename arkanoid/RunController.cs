@@ -20,6 +20,7 @@ namespace arkanoid
         private List<Bonus> bonuses;
         private Stats stats;
         private bool onPause;
+        private bool winAction;
         private Point mousePoint;
         public int Level { get; private set; }
 
@@ -106,6 +107,10 @@ namespace arkanoid
                     {
                         if (bonuses[i].BonusType == BonusType.life)
                             stats.Life.Value++;
+                        else if (bonuses[i].BonusType == BonusType.speedUp)
+                            SpeedUpBalls();
+                        else if (bonuses[i].BonusType == BonusType.speedDown)
+                            SpeedDownBalls();
                         else
                             pad.DefineBonusType(bonuses[i].BonusType);
 
@@ -157,6 +162,7 @@ namespace arkanoid
                                 balls[i].BondedToPad = true;
                                 balls[i].SetPosition(pad.Area.X + pad.Area.Width / 3, pad.Area.Y - 20);
                                 balls[i].Direction = new System.Numerics.Vector2(0, -1);
+                                balls[i].Speed = balls[i].DefaultSpeed;
                                 stats.Life.Value--;
                             }
                             else if (balls.Count != 0)
@@ -174,8 +180,40 @@ namespace arkanoid
                 map.PictureField.Invalidate();
                 CheckForWin();
             }
+            else if (winAction)
+            {
+                if(stats.Life.Value > 0)
+                {
+                    stats.Life.Value--;
+                    stats.Score.Value += 1000;
+                }
+                else if (stats.AnimationOver)
+                {
+                    ChangeCursorState();
+                    parent.KeyDown -= Parent_KeyDown1;
+                    frame.Stop();
+                    stats.ScoreMultiplier.Stop();
+                    leaderboardMenu.Score = stats.Score.Value;
+                    leaderboardMenu.Level = map.Level;
+                    leaderboardMenu.Show();
+                }
+                map.PictureField.Invalidate();
+            }
         }
 
+        private void SpeedUpBalls()
+        {
+            foreach (var item in balls)
+                item.Speed += 1.5f;
+
+        }
+
+        private void SpeedDownBalls()
+        {
+            foreach (var item in balls)
+                item.Speed -= 1.5f;
+
+        }
         private void CheckForWin()
         {
             foreach (var item in map.Objects)
@@ -185,17 +223,13 @@ namespace arkanoid
             }
 
             onPause = true;
-            ChangeCursorState();
-            frame.Stop();
-            stats.ScoreMultiplier.Stop();
-            leaderboardMenu.Score = stats.Score.Value;
-            leaderboardMenu.Level = map.Level;
-            leaderboardMenu.Show();
+            winAction = true;
         }
 
         private void LoseCondition()
         {
             onPause = true;
+            winAction = true;
             ChangeCursorState();
             frame.Stop();
             stats.ScoreMultiplier.Stop();
@@ -274,6 +308,7 @@ namespace arkanoid
             map.Create();
             map.PictureField.Location = new Point(0, 0);
             onPause = false;
+            winAction = false;
 
             if (stats.Life.Value < 0)
                 stats = new Stats(map.PictureField);
@@ -307,6 +342,7 @@ namespace arkanoid
             balls = null;
             pad = null;
             onPause = false;
+            winAction = false;
             parent.KeyDown -= Parent_KeyDown1;
 
             map.PictureField.Hide();

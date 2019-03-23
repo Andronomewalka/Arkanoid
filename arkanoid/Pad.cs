@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace arkanoid
 {
@@ -28,15 +24,10 @@ namespace arkanoid
             reflectionAngle = 0.4f;
         }
 
-        // protected virtual Bitmap DefineTexture()
-        // {
-        //     return Properties.Resources.middlePad2;
-        // }
-
         protected override RectangleF DefineRigidBody()
         {
             centerX = Area.X + Area.Width / 2 - 1;
-            return new RectangleF(Area.X + 1, Area.Y + 6, 133, 17);
+            return new RectangleF(Area.X + 1, Area.Y + 6, Area.Width - 2, 17);
         }
 
         private void PadPaint(int length)
@@ -57,16 +48,11 @@ namespace arkanoid
 
         public void SetPosition(float posX, float posY)
         {
-            // if (posX > Area.X)
-            //     Direction = new System.Windows.Vector(1,0);
-            // else if (posX < Area.X)
-            //     Direction = new System.Windows.Vector(-1, 0);
             Area = new RectangleF(posX, posY, Area.Width, Area.Height);
 
             Body = DefineBody();
             RigidBody = DefineRigidBody();
             LineTexture = DefineLineTexture();
-
         }
 
         protected override List<Line> DefineBody()

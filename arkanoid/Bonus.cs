@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace arkanoid
 {
-    public enum BonusType { life, longerPad, shorterPad }
+    public enum BonusType { life, longerPad, shorterPad, speedUp, speedDown }
     class Bonus : GameObject, IChangePosition
     {
         public BonusType BonusType { get; set; }
@@ -21,6 +17,7 @@ namespace arkanoid
         }
         public BonusType DefineBonusType()
         {
+           //   return BonusType.speedDown;
             Random r = new Random();
             return (BonusType)r.Next(0, Enum.GetNames(typeof(BonusType)).Length);
         }
@@ -33,6 +30,10 @@ namespace arkanoid
                 return Properties.Resources.longerPad;
             else if (BonusType == BonusType.shorterPad)
                 return Properties.Resources.shotterPad;
+            else if (BonusType == BonusType.speedUp)
+                return Properties.Resources.speedUp;
+            else if (BonusType == BonusType.speedDown)
+                return Properties.Resources.speedDown;
 
             return Properties.Resources.life;
         }

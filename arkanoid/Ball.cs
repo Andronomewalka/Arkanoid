@@ -8,11 +8,26 @@ namespace arkanoid
     public class Ball : GameObject, IChangePosition
     {
         enum CollisionSide { vertical, horizontal }
-        protected float speed; // скорость
         List<GameObject> recentCollisionObjects; // иногда при столкновениях объекты залипают друг с другом, из-за того что не успевая покинуть область коллизии, меняют направление
         public Vector2 Direction { get; set; }
         public bool BondedToPad { get; set; } = true;
         public PointF Center { get; private set; }
+        public float DefaultSpeed { get; set; } = 5;
+        private float speed;
+        private float maxSpeed = 8;
+        private float minSpeed = 3;
+        public float Speed
+        {
+            get
+            {
+                return speed;
+            }
+            set
+            {
+                if (value < maxSpeed && value >= minSpeed)
+                    speed = value;
+            }
+        } // скорость
 
         public Ball(RectangleF area)
         {
@@ -23,7 +38,7 @@ namespace arkanoid
             RigidBody = DefineRigidBody();
             Center = DefineCenter();
             Direction = new Vector2(0f, -1f);
-            speed = 5f;
+            Speed = DefaultSpeed;
             recentCollisionObjects = new List<GameObject>();
             LineTexture = DefineLineTexture();
         }
@@ -78,7 +93,7 @@ namespace arkanoid
 
         public void Move()
         {
-            RectangleF newPos = new RectangleF((float)(Area.X + speed * Direction.X), (float)(Area.Y + speed * Direction.Y), Area.Width, Area.Height);
+            RectangleF newPos = new RectangleF((float)(Area.X + Speed * Direction.X), (float)(Area.Y + Speed * Direction.Y), Area.Width, Area.Height);
 
             bool outOfscreen = false;
             if (RigidBody.Left <= Map.WindowSize.Left || RigidBody.Right >= Map.WindowSize.Right)
@@ -175,13 +190,13 @@ namespace arkanoid
         {
             if (side == CollisionSide.vertical)
             {
-                RectangleF newPos = new RectangleF((float)(Area.X - speed * Direction.X), (float)(Area.Y - speed * Direction.Y), Area.Width, Area.Height);
+                RectangleF newPos = new RectangleF((float)(Area.X - Speed * Direction.X), (float)(Area.Y - Speed * Direction.Y), Area.Width, Area.Height);
                 Direction = new Vector2(Direction.X, Direction.Y * -1);
                 SetPosition(newPos.Left, newPos.Top);
             }
             else if (side == CollisionSide.horizontal)
             {
-                RectangleF newPos = new RectangleF((float)(Area.X - speed * Direction.X), (float)(Area.Y - speed * Direction.Y), Area.Width, Area.Height);
+                RectangleF newPos = new RectangleF((float)(Area.X - Speed * Direction.X), (float)(Area.Y - Speed * Direction.Y), Area.Width, Area.Height);
                 Direction = new Vector2(Direction.X * -1, Direction.Y);
                 SetPosition(newPos.Left, newPos.Top);
             }

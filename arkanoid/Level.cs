@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace arkanoid
 {
@@ -14,8 +10,8 @@ namespace arkanoid
     {
         public int[,] LogicField { get; private set; } // логическое поле игры (загружаем из файла уровня)
         public Image Background { get; private set; } // задник
-        public int FieldWidth { get; private set; } // размеры логического поля
-        public int FieldHeight { get; private set; }
+        public static int FieldWidth { get; private set; } = 18; // размеры логического поля
+        public static int FieldHeight { get; private set; } = 18;
         public int Num { get; private set; }
         public Leaderboard Leaderboard { get; set; }
         private static string path;
@@ -41,29 +37,70 @@ namespace arkanoid
             // 9 - бонус
             LogicField = new int[18, 18]
             {
-                { 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0 },
-                { 0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0 },
-                { 0,1,1,9,0,0,5,5,5,5,5,5,0,0,9,1,1,0 },
-                { 0,1,1,0,0,0,5,0,0,0,0,5,0,0,0,1,1,0 },
-                { 0,1,1,0,0,0,5,0,6,6,0,5,0,0,0,1,1,0 },
-                { 0,1,1,0,0,0,5,0,6,6,0,5,0,0,0,1,1,0 },
-                { 0,1,1,0,0,0,5,0,0,0,0,5,0,0,0,1,1,0 },
-                { 0,1,1,1,0,0,5,5,5,5,5,5,0,0,1,1,1,0 },
-                { 0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0 },
-                { 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0 },
+                { 0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,0,0,0 },
+                { 0,0,0,0,0,1,5,8,8,8,8,5,1,0,0,0,0,0 },
+                { 0,0,0,0,1,5,8,5,5,5,5,8,5,1,0,0,0,0 },
+                { 0,0,0,0,1,8,8,9,9,9,9,8,8,1,0,0,0,0 },
+                { 0,0,0,0,1,5,8,5,5,5,5,8,5,1,0,0,0,0 },
+                { 0,0,0,0,0,1,5,8,8,8,8,5,1,0,0,0,0,0 },
+                { 0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,9,9,0,0,0,0,0,9,9,0,0,0,0,0 },
+                { 0,0,0,0,4,4,0,0,0,0,0,4,4,0,0,0,0,0 },
+                { 0,0,0,4,4,4,4,0,0,0,4,4,4,4,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
             };
-            Background = Properties.Resources.level_2;
+            Background = Properties.Resources.level_6;
             Num = levelNum;
             Leaderboard = new Leaderboard("empty", 0);
             Serialization(levelNum);
+        }
+
+        private Level()
+        {
+            LogicField = new int[18, 18];
+            Random r = new Random();
+            for (int i = 0; i < FieldHeight - 6; i++)
+            {
+                for (int k = 0; k < FieldWidth; k++)
+                {
+                    int res = r.Next(0, 10);
+                    if (res == 2 || res == 3)
+                        LogicField[i, k] = 0;
+                    else
+                        LogicField[i, k] = res;
+                }
+            }
+
+            LogicField[LogicField.GetLength(0) - 2, LogicField.GetLength(1) - 3] = 2;
+            LogicField[LogicField.GetLength(0) - 2, LogicField.GetLength(1) - 2] = 2;
+            LogicField[LogicField.GetLength(0) - 2, LogicField.GetLength(1) - 1] = 2;
+            LogicField[LogicField.GetLength(0) - 3, LogicField.GetLength(1) - 2] = 3;
+
+            int backgroundId = r.Next(1, 7);
+            if (backgroundId == 1)
+                Background = Properties.Resources.level_1;
+            else if (backgroundId == 2)
+                Background = Properties.Resources.level_2;
+            else if (backgroundId == 3)
+                Background = Properties.Resources.level_3;
+            else if (backgroundId == 4)
+                Background = Properties.Resources.level_4;
+            else if (backgroundId == 5)
+                Background = Properties.Resources.level_5;
+            else if (backgroundId == 6)
+                Background = Properties.Resources.level_6;
+        }
+
+        internal static Level Random()
+        {
+            return new Level();
         }
 
         private void Serialization(int levelNum)
@@ -128,6 +165,14 @@ namespace arkanoid
                 Value[i] = value;
             }
         }
-    }
 
+        public void Clear()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Name[i] = "empty";
+                Value[i] = 0;
+            }
+        }
+    }
 }

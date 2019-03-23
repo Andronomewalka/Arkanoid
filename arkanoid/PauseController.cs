@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace arkanoid
@@ -14,8 +10,8 @@ namespace arkanoid
         private RunController run;
         private Panel scenePanel;
         private Form1 parent;
-        private Button toMain;
-        private Button nextLevel;
+        private Label toMain;
+        private Label nextLevel;
         private Label headline;
         private Font font;
         private string headlineText;
@@ -38,7 +34,7 @@ namespace arkanoid
             scenePanel = new Panel()
             {
                 Size = new Size(300, 300),
-                BackgroundImage = Properties.Resources.background,
+                BackgroundImage = Properties.Resources.pauseBackground,
                 Parent = parent
             };
             scenePanel.Location = new Point(parent.ClientSize.Width / 2 - scenePanel.Width / 2,
@@ -47,23 +43,32 @@ namespace arkanoid
             headline = new Label()
             {
                 Size = new Size(scenePanel.Width, 50),
-                TextAlign = ContentAlignment.MiddleCenter,
-                Font = font
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = font,
+                BackColor = Color.Transparent
             };
 
-            toMain = new Button()
+            toMain = new Label()
             {
                 Size = new Size(scenePanel.Width, 50),
                 Text = "Main menu",
-                Font = font
+                Font = font,
+                BackColor = Color.Transparent,
+                TextAlign = ContentAlignment.MiddleCenter
             };
+            toMain.MouseEnter += Label_MouseEnter;
+            toMain.MouseLeave += Label_MouseLeave;
 
-            nextLevel = new Button()
+            nextLevel = new Label()
             {
                 Size = new Size(scenePanel.Width, 50),
                 Text = "Next Level",
-                Font = font
+                Font = font,
+                BackColor = Color.Transparent,
+                TextAlign = ContentAlignment.MiddleCenter
             };
+            nextLevel.MouseEnter += Label_MouseEnter;
+            nextLevel.MouseLeave += Label_MouseLeave;
 
             scenePanel.Controls.Add(toMain);
             scenePanel.Controls.Add(headline);
@@ -73,6 +78,17 @@ namespace arkanoid
             toMain.Click += ToMain_Click;
             nextLevel.Location = new Point(toMain.Parent.Size.Width / 2 - toMain.Width / 2, toMain.Parent.Size.Height - toMain.Height - nextLevel.Height);
             nextLevel.Click += NextLevel_Click;
+        }
+
+        private void Label_MouseLeave(object sender, EventArgs e)
+        {
+            (sender as Label).Image = null;
+        }
+
+        private void Label_MouseEnter(object sender, EventArgs e)
+        {
+            (sender as Label).Image = Properties.Resources.selectedItem;
+            (sender as Label).ImageAlign = ContentAlignment.MiddleCenter;
         }
 
         private void NextLevel_Click(object sender, EventArgs e)

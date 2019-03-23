@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace arkanoid
@@ -13,6 +8,7 @@ namespace arkanoid
         public StatLife Life { get; set; }
         public StatScore Score { get; set; }
         public StatsScoreMultiplier ScoreMultiplier { get; set; }
+        public bool AnimationOver { get; private set; }
         private PictureBox pictureField;
         private Font font;
         private SolidBrush brush;
@@ -42,17 +38,29 @@ namespace arkanoid
 
             //отображение жизни
             if (Life.AnimationDown || Life.AnimationUp)
+            {
                 Life.Animation(g, font, brush, workArea);
+                AnimationOver = false;
+            }
             else
+            {
                 g.DrawString("Lifes: " + Life.Value.ToString(), font, brush, workArea);
+                AnimationOver = true;
+            }
 
             // отображение счёта
             workArea = new Rectangle(80, 545, 200, 25);
             g.Clip = new Region(workArea);
             if (Score.AnimationDown)
+            {
                 Score.Animation(g, font, brush, workArea);
+                AnimationOver = false;
+            }
             else
+            {
                 g.DrawString("Score: " + Score.Value.ToString(), font, brush, workArea);
+                AnimationOver = true;
+            }
 
             g.Clip = prev;
             g.DrawImage(ScoreMultiplier.Bar.Field, 50, 570);

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,10 +14,8 @@ namespace arkanoid
             CenterToScreen();
             DoubleBuffered = true;
             KeyPreview = true;
-            // Leaderboard s = new Leaderboard();
-            // s.ReadForLevel(1);
-            // new Level(1);
-             MainController main = new MainController(this);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MainController main = new MainController(this);
             FormClosing += Form1_FormClosing;
         }
 

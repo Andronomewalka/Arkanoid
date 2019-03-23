@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace arkanoid
@@ -15,7 +13,10 @@ namespace arkanoid
         RunController run;
         Form1 parent;
         List<Button> levelButtons;
+        List<Label> levelButtonsLabels;
+        List<ToolTip> labelsToolTip;
         Level[] levels;
+
 
         public MainController(Form1 parent)
         {
@@ -50,13 +51,90 @@ namespace arkanoid
         private void LevelSelectorScreen()
         {
             levelButtons = new List<Button>();
+            levelButtonsLabels = new List<Label>();
+            labelsToolTip = new List<ToolTip>();
             for (int i = 0; i < levels.Length; i++)
             {
                 levelButtons.Add(CreateLevelButton(levels[i], i));
+                levelButtonsLabels.Add(CreateLevelButtonLabel(levelButtons.Last(), levels[i]));
                 scenePanel.Controls.Add(levelButtons.Last());
+                scenePanel.Controls.Add(levelButtonsLabels.Last());
             }
+
+            Button randomLevel = new Button()
+            {
+                Image = Properties.Resources.RandomLevel,
+                Size = new Size(Properties.Resources.RandomLevel.Width + 8, Properties.Resources.RandomLevel.Height + 8),
+                Location = DefineButtonLevelLocation(),
+                Name = "random",
+            };
+            randomLevel.Click += levelButtons_Click;
+            scenePanel.Controls.Add(randomLevel);
+            //scenePanel.Controls.Add(CreateLevelButton(Level.Random(), levels.Length));
         }
 
+        private Label CreateLevelButtonLabel(Button button, Level level)
+        {
+            Label label = new Label()
+            {
+                Size = new Size(button.Size.Width, 30),
+                Location = new Point(button.Location.X, button.Location.Y + button.Height),
+                Text = DefineHighScoreLevel(level),
+                Font = new Font("Arial", 10),
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.White
+            };
+            label.ContextMenuStrip = new ContextMenuStrip();
+
+            string allHighScoresLabel = "Name\t\tScore\n";
+            for (int i = 0; i < level.Leaderboard.Name.Length; i++)
+                allHighScoresLabel += level.Leaderboard.Name[i] +
+                    "\t\t" + level.Leaderboard.Value[i].ToString() + "\n";
+
+            ToolTip scores = new ToolTip()
+            {
+                ToolTipTitle = "Scores",
+                AutoPopDelay = 0,
+            };
+            labelsToolTip.Add(scores);
+
+            ToolStripMenuItem eraseHighScores = new ToolStripMenuItem("Erase Scores");
+            eraseHighScores.Click += EraseHighScores_Click;
+
+            void EraseHighScores_Click(object sender, EventArgs e)
+            {
+                level.Leaderboard.Clear();
+                level.Serialization();
+                UpdateLabel(label, level, scores);
+            }
+
+            label.ContextMenuStrip.Items.Add(eraseHighScores);
+
+            scores.SetToolTip(label, allHighScoresLabel);
+            return label;
+        }
+
+        private void UpdateLabel(Label label, Level level, ToolTip toolTip)
+        {
+            label.Text = DefineHighScoreLevel(level);
+            string allHighScoresLabel = "Name     Score\n";
+            for (int i = 0; i < level.Leaderboard.Name.Length; i++)
+                allHighScoresLabel += level.Leaderboard.Name[i] +
+                    "  " + level.Leaderboard.Value[i].ToString() + "\n";
+
+            toolTip.SetToolTip(label, allHighScoresLabel);
+        }
+
+        private string DefineHighScoreLevel(Level level)
+        {
+            int maxValue = level.Leaderboard.Value.Max();
+
+            for (int i = 0; i < level.Leaderboard.Name.Length; i++)
+                if (level.Leaderboard.Value[i] == maxValue)
+                    return level.Leaderboard.Name[i] + "           " + maxValue;
+
+            return null;
+        }
 
         private Button CreateLevelButton(Level level, int levelNum)
         {
@@ -68,9 +146,9 @@ namespace arkanoid
             int TileWidth = sprite.Width;
             int TileHeight = sprite.Height;
 
-            for (int i = 0; i < level.FieldHeight - 5; i++)
+            for (int i = 0; i < Level.FieldHeight - 3; i++)
             {
-                for (int k = 0; k < level.FieldWidth; k++)
+                for (int k = 0; k < Level.FieldWidth; k++)
                 {
                     if (level.LogicField[i, k] == 0)
                         sprite = Properties.Resources.empty;
@@ -109,7 +187,7 @@ namespace arkanoid
             Button button = new Button()
             {
                 Image = smallImage,
-                Size = new Size(smallImage.Width, smallImage.Height + 8),
+                Size = new Size(smallImage.Width + 8, smallImage.Height + 8),
                 Location = DefineButtonLevelLocation(),
                 Name = levelNum.ToString(),
             };
@@ -120,19 +198,23 @@ namespace arkanoid
         private Point DefineButtonLevelLocation()
         {
             if (levelButtons.Count == 0)
-                return new Point(2, 20);
+                return new Point(45, 20);
 
-            else if (levelButtons.Last().Right + 148 > parent.ClientRectangle.Right)
-                return new Point(levelButtons.First().Left, levelButtons.Last().Bottom + 70);
+            else if (levelButtons.Last().Right + levelButtons.Last().Width + 25 > parent.ClientRectangle.Right)
+                return new Point(levelButtons.First().Left, levelButtons.Last().Bottom + 50);
 
-            return new Point(levelButtons.Last().Right + 2, levelButtons.Last().Top);
+            return new Point(levelButtons.Last().Right + 50, levelButtons.Last().Top);
         }
 
         private void levelButtons_Click(object sender, EventArgs e)
         {
             Button cur = sender as Button;
             Hide();
-            run.LoadNew(levels[Convert.ToUInt32(cur.Name)]);
+            if (cur.Name != "random")
+                run.LoadNew(levels[Convert.ToUInt32(cur.Name)]);
+            else
+                run.LoadNew(Level.Random());
+
             run.Show();
         }
 
@@ -147,18 +229,15 @@ namespace arkanoid
 
         public void Show()
         {
+            for (int i = 0; i < levelButtons.Count; i++)
+                UpdateLabel(levelButtonsLabels[i], levels[i], labelsToolTip[i]);
+
             scenePanel.Show();
-            //  scenePanel.Location =
-            //     new Point(scenePanel.Location.X + parent.ClientSize.Width,
-            //     scenePanel.Location.Y);
         }
 
         public void Hide()
         {
             scenePanel.Hide();
-            //scenePanel.Location =
-            //    new Point(scenePanel.Location.X - parent.ClientSize.Width,
-            //    scenePanel.Location.Y);
         }
     }
 }

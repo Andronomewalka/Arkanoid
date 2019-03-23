@@ -34,6 +34,8 @@ namespace arkanoid
                 return Properties.Resources.redBlock;
             else if (Iteration == 2)
                 return Properties.Resources.orangeBlock;
+            else if (Iteration == 3)
+                return Properties.Resources.yellowBlock;
 
             return Properties.Resources.redBlock;
         }

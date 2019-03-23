@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace arkanoid
@@ -14,7 +10,7 @@ namespace arkanoid
         private Form1 parent;
         public Level Level { get; set; }
         private PauseController pauseMenu;
-        private Button cont;
+        private Label cont;
         private ListView leadersList;
         private int score;
         private Label headline;
@@ -32,27 +28,45 @@ namespace arkanoid
             this.parent = parent;
             pauseMenu = new PauseController(parent, mainMenu, run);
 
+            font = new Font("Rockwell", 16);
+
             scenePanel = new Panel()
             {
                 Size = new Size(300, 300),
-                BackgroundImage = Properties.Resources.background,
+                BackgroundImage = Properties.Resources.pauseBackground,
                 Parent = parent
             };
             scenePanel.Location = new Point(parent.ClientSize.Width / 2 - scenePanel.Width / 2,
             parent.ClientSize.Height / 2 - scenePanel.Height / 2);
 
-
             scenePanel.Hide();
 
-            cont = new Button()
+            cont = new Label()
             {
                 Text = "Continue",
-                Size = new Size(scenePanel.Width, 50)
+                Size = new Size(scenePanel.Width, 50),
+                BackColor = Color.Transparent,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = font
             };
+            cont.MouseEnter += Label_MouseEnter;
+            cont.MouseLeave += Label_MouseLeave;
+
             scenePanel.Controls.Add(cont);
             cont.Location = new Point(cont.Parent.Size.Width / 2 - cont.Width / 2, cont.Parent.Size.Height - cont.Height);
             cont.Click += Cont_Click;
 
+        }
+
+        private void Label_MouseLeave(object sender, EventArgs e)
+        {
+            (sender as Label).Image = null;
+        }
+
+        private void Label_MouseEnter(object sender, EventArgs e)
+        {
+            (sender as Label).Image = Properties.Resources.selectedItem;
+            (sender as Label).ImageAlign = ContentAlignment.MiddleCenter;
         }
 
         private bool CheckNewHighScore()
@@ -69,14 +83,13 @@ namespace arkanoid
         {
             leadersList = new ListView()
             {
-                Size = new Size(scenePanel.Width, 100),
+                Size = new Size(scenePanel.Width-20, 100),
                 View = View.Details,
                 LabelEdit = false,
                 AllowColumnReorder = false,
                 AllowDrop = false,
-                BackColor = Color.WhiteSmoke
             };
-
+            MakeTransparent(leadersList, 12, 80);
 
             for (int i = 0; i < Level.Leaderboard.Name.Length; i++)
             {
@@ -95,7 +108,34 @@ namespace arkanoid
             }
             leadersList.Columns.Add("#", 20, HorizontalAlignment.Center);
             leadersList.Columns.Add("Name", 150, HorizontalAlignment.Left);
-            leadersList.Columns.Add("Score", 126, HorizontalAlignment.Center);
+            leadersList.Columns.Add("Score", 105, HorizontalAlignment.Center);
+        }
+
+        private void MakeTransparent(Control ctrl, int x, int y)
+        {
+            Bitmap bMap = new Bitmap(Properties.Resources.pauseBackground);
+            Color[,] pixelArray = new Color[ctrl.Width, ctrl.Height];
+
+            for (int i = 0; i < ctrl.Width; i++)
+            {
+                for (int j = 0; j < ctrl.Height; j++)
+                {
+                    pixelArray[i, j] = bMap.GetPixel(x + i, y + j);
+                }
+            }
+
+            Bitmap bmp = new Bitmap(ctrl.Width, ctrl.Height);
+
+            for (int i = 0; i < ctrl.Width; i++)
+            {
+                for (int j = 0; j < ctrl.Height; j++)
+                {
+                    bmp.SetPixel(i, j, pixelArray[i, j]);
+                }
+            }
+
+            ctrl.BackgroundImage = bmp;
+            ctrl.Location = new Point(x, y);
         }
 
         private void Cont_Click(object sender, EventArgs e)
@@ -115,14 +155,15 @@ namespace arkanoid
             headline = new Label()
             {
                 Size = new Size(scenePanel.Width, 50),
-                Text = "New High Score :" + score.ToString(),
+                Text = "New High Score: " + score.ToString(),
+                BackColor = Color.Transparent,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = font
             };
             scenePanel.Controls.Add(headline);
 
             SetListViewItems();
-            leadersList.Location = new Point(0, headline.Height);
+            leadersList.Location = new Point(10, headline.Height);
             scenePanel.Controls.Add(leadersList);
 
 
@@ -131,39 +172,47 @@ namespace arkanoid
             {
                 TextBox textBox = new TextBox()
                 {
-                    Size = new Size(scenePanel.Width, 50),
+                    Size = new Size(scenePanel.Width-12, 50),
                     Font = font
                 };
-                Button submit = new Button()
+                Label submit = new Label()
                 {
                     Size = new Size(scenePanel.Width / 2, 50),
                     Text = "Submit",
-                    BackColor = Color.WhiteSmoke,
-                    Font = font
+                    BackColor = Color.Transparent,
+                    Font = font,
+                    TextAlign = ContentAlignment.MiddleCenter
                 };
+                bool submitClicked = false;
                 submit.Click += Submit_Click;
+                submit.MouseEnter += Label_MouseEnter;
+                submit.MouseLeave += Label_MouseLeave;
+
                 scenePanel.Controls.Add(textBox);
                 scenePanel.Controls.Add(submit);
-                textBox.Location = new Point(leadersList.Location.X, leadersList.Location.Y + leadersList.Height + 5);
+                textBox.Location = new Point(6, leadersList.Location.Y + leadersList.Height + 5);
                 submit.Location = new Point(scenePanel.Width / 4, textBox.Location.Y + textBox.Height + 5);
 
                 void Submit_Click(object sender, EventArgs e)
                 {
-                    for (int i = 0; i < Level.Leaderboard.Name.Length; i++)
+                    if (!submitClicked)
                     {
-                        if (score > Level.Leaderboard.Value[i])
+                        for (int i = 0; i < Level.Leaderboard.Name.Length; i++)
                         {
-                            Level.Leaderboard.Name[i] = textBox.Text;
-                            Level.Leaderboard.Value[i] = score;
-                            break;
+                            if (score > Level.Leaderboard.Value[i])
+                            {
+                                Level.Leaderboard.Name[i] = textBox.Text;
+                                Level.Leaderboard.Value[i] = score;
+                                break;
+                            }
                         }
+                        submitClicked = true;
+                        scenePanel.Controls.Remove(leadersList);
+                        SetListViewItems();
+                        leadersList.Location = new Point(10, headline.Height);
+                        scenePanel.Controls.Add(leadersList);
+                        Level.Serialization();
                     }
-                    (sender as Button).Enabled = false;
-                    scenePanel.Controls.Remove(leadersList);
-                    SetListViewItems();
-                    leadersList.Location = new Point(0, headline.Height);
-                    scenePanel.Controls.Add(leadersList);
-                    Level.Serialization();
                 }
             }
             else

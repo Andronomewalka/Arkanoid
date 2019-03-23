@@ -35,9 +35,6 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RoundCorneredProgressBar, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\RoundCornerProgressBar.1.0.0.0\lib\net45\RoundCorneredProgressBar.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -112,9 +109,6 @@
     <None Include="Resources\ball_mid.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\background.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\orangeBlock.png" />
   </ItemGroup>
   <ItemGroup>
@@ -154,12 +148,6 @@
     <None Include="Resources\empty.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\yellowBlock.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\background_1.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\background_menu.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +167,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\level_6.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speedUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speedDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pauseBackground.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\selectedItem.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yellowBlock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RandomLevel.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
