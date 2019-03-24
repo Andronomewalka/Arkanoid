@@ -136,32 +136,32 @@ namespace arkanoid
 
         public void Show()
         {
-                scenePanel.Controls.Clear();
+            scenePanel.Controls.Clear();
 
-                cont = new Label()
-                {
-                    Text = "Continue",
-                    Size = new Size(scenePanel.Width, 50),
-                    BackColor = Color.Transparent,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    Font = font
-                };
-                cont.MouseEnter += Label_MouseEnter;
-                cont.MouseLeave += Label_MouseLeave;
+            cont = new Label()
+            {
+                Text = "Continue",
+                Size = new Size(scenePanel.Width, 50),
+                BackColor = Color.Transparent,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = font
+            };
+            cont.MouseEnter += Label_MouseEnter;
+            cont.MouseLeave += Label_MouseLeave;
 
-                scenePanel.Controls.Add(cont);
-                cont.Location = new Point(cont.Parent.Size.Width / 2 - cont.Width / 2, cont.Parent.Size.Height - cont.Height);
-                cont.Click += Cont_Click;
+            scenePanel.Controls.Add(cont);
+            cont.Location = new Point(cont.Parent.Size.Width / 2 - cont.Width / 2, cont.Parent.Size.Height - cont.Height);
+            cont.Click += Cont_Click;
 
-                headline = new Label()
-                {
-                    Size = new Size(scenePanel.Width, 50),
-                    Text = "New High Score: " + score.ToString(),
-                    BackColor = Color.Transparent,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    Font = font
-                };
-                scenePanel.Controls.Add(headline);
+            headline = new Label()
+            {
+                Size = new Size(scenePanel.Width, 50),
+                Text = "New High Score: " + score.ToString(),
+                BackColor = Color.Transparent,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = font
+            };
+            scenePanel.Controls.Add(headline);
 
             if (Level.Leaderboard.Name[0] != "random")
             {
@@ -186,7 +186,6 @@ namespace arkanoid
                         Font = font,
                         TextAlign = ContentAlignment.MiddleCenter
                     };
-                    bool submitClicked = false;
                     submit.Click += Submit_Click;
                     submit.MouseEnter += Label_MouseEnter;
                     submit.MouseLeave += Label_MouseLeave;
@@ -198,18 +197,14 @@ namespace arkanoid
 
                     void Submit_Click(object sender, EventArgs e)
                     {
-                        if (!submitClicked)
-                        {
-                            DefineScorePosition(score, textBox.Text, 0);
-                            textBox.Enabled = false;
-                            submit.Enabled = false;
-                            submitClicked = true;
-                            scenePanel.Controls.Remove(leadersList);
-                            SetListViewItems();
-                            leadersList.Location = new Point(10, headline.Height);
-                            scenePanel.Controls.Add(leadersList);
-                            Level.Serialization();
-                        }
+                        DefineScorePosition(score, textBox.Text, 0);
+                        textBox.Enabled = false;
+                        submit.Enabled = false;
+                        scenePanel.Controls.Remove(leadersList);
+                        SetListViewItems();
+                        leadersList.Location = new Point(10, headline.Height);
+                        scenePanel.Controls.Add(leadersList);
+                        Level.Serialization();
                     }
                 }
                 else

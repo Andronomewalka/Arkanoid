@@ -303,18 +303,14 @@ namespace arkanoid
         public void LoadCont(Level level)
         {
             map.PictureField.Hide();
+            frame.Dispose();
+
             Level = level.Num;
             map = new Map(parent, level);
             map.Create();
-            map.PictureField.Location = new Point(0, 0);
             onPause = false;
             winAction = false;
-
-            // if (stats.Life.Value < 0)
             stats = new Stats(map.PictureField);
-            // else
-            //     stats = new Stats(map.PictureField, stats.Life);
-
             FindBallAndPad();
             CustomBlockEventSign();
             ChangeCursorState();
