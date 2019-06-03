@@ -9,7 +9,5 @@
 ![Alt text](Screenshots/arkanoid_game_2.png)
 
 
-![Alt text](Screenshots/arkanoid_mainScreen.png)
-
 
 ![Alt text](Screenshots/arkanoid_pauseScreen.png)
