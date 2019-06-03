@@ -3,7 +3,7 @@
 Арканоид в египетском сеттинге, написан в рамках Windows Forms технологии
 
 
-![Alt text](Screenshots/arkanoid_gameScreen.png)
+![Alt text](Screenshots/arkanoid_mainScreen.png)
 
 ![Alt text](Screenshots/arkanoid_game_1.png)
 
