@@ -10,6 +10,7 @@ namespace arkanoid
         public Form1()
         {
             InitializeComponent();
+            Text = "Awesome arkanoid";
             ClientSize = new Size(810, 600);
             CenterToScreen();
             DoubleBuffered = true;
